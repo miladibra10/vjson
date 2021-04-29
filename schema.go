@@ -1,4 +1,4 @@
-package go_json_validator
+package vjson
 
 type Schema struct {
 	Fields []Field `json:"fields"`
