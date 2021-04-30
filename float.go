@@ -33,6 +33,10 @@ type FloatField struct {
 // To Force Implementing Field interface by IntegerField
 var _ Field = (*FloatField)(nil)
 
+func (f *FloatField) GetName() string {
+	return f.name
+}
+
 func (f *FloatField) Validate(v interface{}) error {
 	if v == nil {
 		if !f.required {

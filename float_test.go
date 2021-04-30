@@ -5,6 +5,11 @@ import (
 	"testing"
 )
 
+func TestFloatField_GetName(t *testing.T) {
+	field := Float("foo")
+	assert.Equal(t, "foo", field.GetName())
+}
+
 func TestFloatField_Validate(t *testing.T) {
 	t.Run("invalid_input", func(t *testing.T) {
 		field := Float("foo")

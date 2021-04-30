@@ -20,6 +20,10 @@ type ArrayField struct {
 // To Force Implementing Field interface by ArrayField
 var _ Field = (*ArrayField)(nil)
 
+func (a *ArrayField) GetName() string {
+	return a.name
+}
+
 func (a *ArrayField) Validate(v interface{}) error {
 	if v == nil {
 		if !a.required {

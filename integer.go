@@ -32,6 +32,10 @@ type IntegerField struct {
 // To Force Implementing Field interface by IntegerField
 var _ Field = (*IntegerField)(nil)
 
+func (i *IntegerField) GetName() string {
+	return i.name
+}
+
 func (i *IntegerField) Validate(v interface{}) error {
 	if v == nil {
 		if !i.required {

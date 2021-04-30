@@ -12,6 +12,10 @@ type BooleanField struct {
 // To Force Implementing Field interface by BooleanField
 var _ Field = (*BooleanField)(nil)
 
+func (b *BooleanField) GetName() string {
+	return b.name
+}
+
 func (b *BooleanField) Validate(v interface{}) error {
 	if v == nil {
 		if !b.required {
