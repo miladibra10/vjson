@@ -27,6 +27,10 @@ type StringField struct {
 // To Force Implementing Field interface by StringField
 var _ Field = (*StringField)(nil)
 
+func (s *StringField) GetName() string {
+	return s.name
+}
+
 func (s *StringField) Required() *StringField {
 	s.required = true
 	return s

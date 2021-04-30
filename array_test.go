@@ -5,6 +5,11 @@ import (
 	"testing"
 )
 
+func TestArrayField_GetName(t *testing.T) {
+	field := Array("foo", Integer("bar"))
+	assert.Equal(t, "foo", field.GetName())
+}
+
 func TestArrayField_Validate(t *testing.T) {
 	t.Run("required", func(t *testing.T) {
 		t.Run("nil_value", func(t *testing.T) {
