@@ -11,13 +11,19 @@ type Schema struct {
 }
 
 func (s *Schema) ValidateBytes(input []byte) error {
-	json := gjson.ParseBytes(input)
-	return s.validateJSON(json)
+	if gjson.ValidBytes(input) {
+		json := gjson.ParseBytes(input)
+		return s.validateJSON(json)
+	}
+	return errors.Errorf("could not parse json input.")
 }
 
 func (s *Schema) ValidateString(input string) error {
-	json := gjson.Parse(input)
-	return s.validateJSON(json)
+	if gjson.Valid(input) {
+		json := gjson.Parse(input)
+		return s.validateJSON(json)
+	}
+	return errors.Errorf("could not parse json input.")
 }
 
 func (s *Schema) validateJSON(json gjson.Result) error {
