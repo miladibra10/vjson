@@ -9,6 +9,9 @@ type BooleanField struct {
 	value           bool
 }
 
+// To Force Implementing Field interface by BooleanField
+var _ Field = (*BooleanField)(nil)
+
 func (b *BooleanField) Validate(v interface{}) error {
 	if v == nil {
 		if !b.required {
