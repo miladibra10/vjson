@@ -1,0 +1,25 @@
+{
+  "fields": [
+    {
+      "type": "object",
+      "schema": {
+        "fields": [
+          {
+            "name": "age",
+            "type": "integer",
+            "required": true,
+            "min": 2,
+            "max": 100,
+            "positive": true,
+            "ranges": [
+              {
+                "start": 0,
+                "end": 5000
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

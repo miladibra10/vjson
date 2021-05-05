@@ -127,3 +127,17 @@ func TestStringField_Validate(t *testing.T) {
 
 	})
 }
+
+func TestNewString(t *testing.T) {
+	field := NewString(StringFieldSpec{
+		Name: "bar",
+		Required: true,
+	}, false, false, false, false)
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "bar", field.name)
+	assert.Equal(t, false, field.validateMinLength)
+	assert.Equal(t, false, field.validateMaxLength)
+	assert.Equal(t, false, field.validateFormat)
+	assert.Equal(t, false, field.validateChoices)
+}

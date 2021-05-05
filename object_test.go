@@ -62,3 +62,15 @@ func TestObjectField_Validate(t *testing.T) {
 		})
 	})
 }
+
+func TestNewObject(t *testing.T) {
+	s := Schema{}
+	field := NewObject(ObjectFieldSpec{
+		Name: "bar",
+		Required: true,
+	}, s)
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "bar", field.name)
+	assert.Equal(t, s, field.schema)
+}

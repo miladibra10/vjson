@@ -123,3 +123,23 @@ func TestIntegerField_Validate(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func TestNewInteger(t *testing.T) {
+	field := NewInteger(IntegerFieldSpec{
+		Name: "bar",
+		Required: true,
+		Ranges: []IntRangeSpec{
+			{
+				Start: 10,
+				End:   20,
+			},
+		},
+	}, false, false, false, true)
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "bar", field.name)
+	assert.Equal(t, false, field.minValidation)
+	assert.Equal(t, false, field.maxValidation)
+	assert.Equal(t, false, field.signValidation)
+	assert.Equal(t, true, field.rangeValidation)
+}
