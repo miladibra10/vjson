@@ -1,0 +1,9 @@
+{
+  "fields": [
+    {
+      "name": "is_active",
+      "type": "boolean",
+      "value": true
+    }
+  ]
+}

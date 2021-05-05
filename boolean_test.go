@@ -55,3 +55,13 @@ func TestBooleanField_Validate(t *testing.T) {
 	})
 }
 
+func TestNewBoolean(t *testing.T) {
+	field := NewBoolean(BooleanFieldSpec{
+		Name: "bar",
+		Required: true,
+	}, false)
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "bar", field.name)
+	assert.Equal(t, false, field.valueValidation)
+}

@@ -32,11 +32,12 @@ func (s *Schema) UnmarshalJSON(bytes []byte) error {
 		field, err := s.getField(fieldSpec)
 		if err != nil {
 			result = multierror.Append(result, err)
+			continue
 		}
 		s.Fields = append(s.Fields, field)
 	}
 
-	return nil
+	return result
 }
 
 func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error)  {

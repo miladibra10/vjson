@@ -1,0 +1,11 @@
+{
+  "fields": [
+    {
+      "type": "string",
+      "required": true,
+      "min_length": 2,
+      "max_length": 100,
+      "format": ".*"
+    }
+  ]
+}

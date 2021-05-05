@@ -1,0 +1,18 @@
+{
+  "fields": [
+    {
+      "name": "score",
+      "type": "float",
+      "required": true,
+      "min": 2.0,
+      "max": 100.0,
+      "positive": true,
+      "ranges": [
+        {
+          "start": 0.2,
+          "end": 5000.5
+        }
+      ]
+    }
+  ]
+}

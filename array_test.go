@@ -96,3 +96,14 @@ func TestArrayField_Validate(t *testing.T) {
 	})
 }
 
+func TestNewArray(t *testing.T) {
+	field := NewArray(ArrayFieldSpec{
+		Name: "bar",
+		Required: true,
+	}, String("foo"), false, false)
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "bar", field.name)
+	assert.Equal(t, false, field.minLengthValidation)
+	assert.Equal(t, false, field.maxLengthValidation)
+}

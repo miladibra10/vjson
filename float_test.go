@@ -98,3 +98,22 @@ func TestFloatField_Validate(t *testing.T) {
 	})
 }
 
+func TestNewFloat(t *testing.T) {
+	field := NewFloat(FloatFieldSpec{
+		Name: "bar",
+		Required: true,
+		Ranges: []FloatRangeSpec{
+			{
+				Start: 0,
+				End:   20,
+			},
+		},
+	}, false, false, false, true)
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "bar", field.name)
+	assert.Equal(t, false, field.minValidation)
+	assert.Equal(t, false, field.maxValidation)
+	assert.Equal(t, false, field.signValidation)
+	assert.Equal(t, true, field.rangeValidation)
+}
