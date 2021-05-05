@@ -1,7 +1,10 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -120,3 +123,12 @@ func TestSchema_Validate(t *testing.T) {
 	})
 }
 
+func TestSchema_UnmarshalJSON(t *testing.T) {
+	var s Schema
+	file, err := os.Open("test.json")
+	assert.Nil(t, err)
+	input, err := ioutil.ReadAll(file)
+	assert.Nil(t, err)
+	err = json.Unmarshal(input, &s)
+	assert.Nil(t, err)
+}
