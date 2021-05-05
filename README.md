@@ -75,9 +75,9 @@ func main() {
 ## Parse Schema
 Schema could be parsed from a file or a string. These methods help to parse schema.
 
-+ [ReadFromString(input string)](): receives characteristics of a schema in a string format and returns a schema object and an error.
-+ [ReadFromBytes(input []byte)](): receives characteristics of a schema in a byte array format and returns a schema object and an error.
-+ [ReadFromFile(filePath string)](): receives file path of json file which contains characteristics of a schema, and returns a schema object and an error.
++ [ReadFromString(input string)](#parse-schema): receives characteristics of a schema in a string format and returns a schema object and an error.
++ [ReadFromBytes(input []byte)](#parse-schema): receives characteristics of a schema in a byte array format and returns a schema object and an error.
++ [ReadFromFile(filePath string)](#parse-schema): receives file path of json file which contains characteristics of a schema, and returns a schema object and an error.
 
 Format of schema for parsing should be a json like this:
 ```json
@@ -139,12 +139,12 @@ vjson.Integer("foo")
 ```
 some validation characteristics could be added to an integer field with chaining some functions:
 
-+ [Required()]() sets the field as a required field. validation will return an error if a required field is not present in json object.
-+ [Min(min int)]() forces the integer field to be greater than `min` in validating json object.
-+ [Max(max int)]() forces the integer field to be lower than `max` in validating json object.
-+ [Positive()]() checks if the value of field is positive.
-+ [Negative()]() checks if the value of field is negative.
-+ [Range(start, end int)]() adds a range for integer field. the value of json field should be within this range.
++ [Required()](#integer) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [Min(min int)](#integer) forces the integer field to be greater than `min` in validating json object.
++ [Max(max int)](#integer) forces the integer field to be lower than `max` in validating json object.
++ [Positive()](#integer) checks if the value of field is positive.
++ [Negative()](#integer) checks if the value of field is negative.
++ [Range(start, end int)](#integer) adds a range for integer field. the value of json field should be within this range.
 
 integer field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -192,12 +192,12 @@ vjson.Float("foo")
 ```
 some validation characteristics could be added to a float field with chaining some functions:
 
-+ [Required()]() sets the field as a required field. validation will return an error if a required field is not present in json object.
-+ [Min(min float64)]() forces the float field to be greater than `min` in validating json object.
-+ [Max(max float64)]() forces the float field to be lower than `max` in validating json object.
-+ [Positive()]() checks if the value of field is positive.
-+ [Negative()]() checks if the value of field is negative.
-+ [Range(start, end float64)]() adds a range for float field. the value of json field should be within this range.
++ [Required()](#float) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [Min(min float64)](#float) forces the float field to be greater than `min` in validating json object.
++ [Max(max float64)](#float) forces the float field to be lower than `max` in validating json object.
++ [Positive()](#float) checks if the value of field is positive.
++ [Negative()](#float) checks if the value of field is negative.
++ [Range(start, end float64)](#float) adds a range for float field. the value of json field should be within this range.
 
 float field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -245,11 +245,11 @@ vjson.String("foo")
 ```
 some validation characteristics could be added to a string field with chaining some functions:
 
-+ [Required()]() sets the field as a required field. validation will return an error if a required field is not present in json object.
-+ [MinLength(min int)]() forces the length of string field to be greater than `min` in validating json object.
-+ [MaxLength(max int)]() forces the length of string field to be lower than `max` in validating json object.
-+ [Format(format string)]() gets a `regex` format and checks if value of json object matches the format.
-+ [Choices(choice ...string)]() checks if the value of string field is equal to one of choices.
++ [Required()](#string) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [MinLength(min int)](#string) forces the length of string field to be greater than `min` in validating json object.
++ [MaxLength(max int)](#string) forces the length of string field to be lower than `max` in validating json object.
++ [Format(format string)](#string) gets a `regex` format and checks if value of json object matches the format.
++ [Choices(choice ...string)](#string) checks if the value of string field is equal to one of choices.
 
 float field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -290,8 +290,8 @@ vjson.Boolean("foo")
 ```
 some validation characteristics could be added to a boolean field with chaining some functions:
 
-+ [Required()]() sets the field as a required field. validation will return an error if a required field is not present in json object.
-+ [ShouldBe(value bool)]() forces the value of field be equal to `value`
++ [Required()](#boolean) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [ShouldBe(value bool)](#boolean) forces the value of field be equal to `value`
 
 float field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -327,9 +327,9 @@ the first argument is the name of array field, and the second one is the field c
 
 some validation characteristics could be added to an array field with chaining some functions:
 
-+ [Required()]() sets the field as a required field. validation will return an error if a required field is not present in json object.
-+ [MinLength(min int)]() forces the length of array field to be greater than `min` in validating json object.
-+ [MaxLength(max int)]() forces the length of array field to be lower than `max` in validating json object.
++ [Required()](#array) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [MinLength(min int)](#array) forces the length of array field to be greater than `min` in validating json object.
++ [MaxLength(max int)](#array) forces the length of array field to be lower than `max` in validating json object.
 
 array field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -380,7 +380,7 @@ the first argument is the name of object field, and the second one is the schema
 
 some validation characteristics could be added to an array field with chaining some functions:
 
-+ [Required()]() sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [Required()](#object) sets the field as a required field. validation will return an error if a required field is not present in json object.
 
 object field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -425,8 +425,8 @@ vjson.Object("foo", vjson.NewSchema(
 # Validation
 After creating a schema, you can validate your json objects with these methods:
 
-+ [ValidateBytes(input []byte)](): receives a byte array as a json input and validates it. this method returns an error. it would be `nil` if the object is valid, and it will return an error if the input object is not valid.
-+ [ValidateString(input string)](): acts like `ValidateBytes` but its argument is string.
++ [ValidateBytes(input []byte)](#validation): receives a byte array as a json input and validates it. this method returns an error. it would be `nil` if the object is valid, and it will return an error if the input object is not valid.
++ [ValidateString(input string)](#validation): acts like `ValidateBytes` but its argument is string.
 
 # Example
 This code validates an object that should have `name` and `age` fields.
