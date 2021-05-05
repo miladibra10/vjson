@@ -260,6 +260,14 @@ func TestReadFromString(t *testing.T) {
 	assert.Len(t, schema.Fields, 0)
 }
 
+func TestNewSchema(t *testing.T) {
+	s := NewSchema(
+		Integer("foo"),
+		String("bar"),
+		)
+	assert.Len(t, s.Fields, 2)
+}
+
 func TestSchema_UnmarshalJSON(t *testing.T) {
 	var s Schema
 	err := s.UnmarshalJSON([]byte("{{"))

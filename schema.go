@@ -275,6 +275,10 @@ func (s *Schema) validateJSON(json gjson.Result) error {
 	return result
 }
 
+func NewSchema(fields ...Field) Schema {
+	return Schema{Fields: fields}
+}
+
 func ReadFromString(input string) (*Schema, error) {
 	return ReadFromBytes([]byte(input))
 }
