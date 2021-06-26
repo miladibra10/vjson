@@ -9,6 +9,7 @@ const (
 	ArrayType   FieldType = "array"
 	BooleanType FieldType = "boolean"
 	ObjectType  FieldType = "object"
+	NullType  FieldType = "null"
 )
 
 const TypeKey = "type"
