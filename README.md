@@ -39,6 +39,7 @@ list of supported types are:
 + `boolean`
 + `array`
 + `object`
++ `null`
 
 # How to create a Schema
 
