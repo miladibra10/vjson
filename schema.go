@@ -40,7 +40,7 @@ func (s *Schema) UnmarshalJSON(bytes []byte) error {
 	return result
 }
 
-func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error)  {
+func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 	fieldTypeRaw, found := fieldSpec[TypeKey]
 	if found {
 		fieldTypeStr, ok := fieldTypeRaw.(string)
@@ -95,6 +95,14 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error)  {
 					}
 					return field, nil
 				}
+			case NullType:
+				{
+					field, err := s.getNullField(fieldSpec)
+					if err != nil {
+						return nil, err
+					}
+					return field, nil
+				}
 			default:
 				{
 					return nil, errors.Errorf("Invalid type: %s", fieldType)
@@ -110,7 +118,7 @@ func (s *Schema) getIntegerField(fieldSpec map[string]interface{}) (*IntegerFiel
 	var intSpec IntegerFieldSpec
 	err := mapstructure.Decode(fieldSpec, &intSpec)
 	if err != nil {
-		return nil, errors.Wrap(err,"could not decode integer field to IntegerFieldSpec")
+		return nil, errors.Wrap(err, "could not decode integer field to IntegerFieldSpec")
 	}
 	if intSpec.Name == "" {
 		return nil, errors.Errorf("name field is required for an integer field")
@@ -129,7 +137,7 @@ func (s *Schema) getFloatField(fieldSpec map[string]interface{}) (*FloatField, e
 	var floatSpec FloatFieldSpec
 	err := mapstructure.Decode(fieldSpec, &floatSpec)
 	if err != nil {
-		return nil, errors.Wrap(err,"could not decode float field to IntegerFieldSpec")
+		return nil, errors.Wrap(err, "could not decode float field to IntegerFieldSpec")
 	}
 
 	if floatSpec.Name == "" {
@@ -150,7 +158,7 @@ func (s *Schema) getStringField(fieldSpec map[string]interface{}) (*StringField,
 	var stringSpec StringFieldSpec
 	err := mapstructure.Decode(fieldSpec, &stringSpec)
 	if err != nil {
-		return nil, errors.Wrap(err,"could not decode float field to IntegerFieldSpec")
+		return nil, errors.Wrap(err, "could not decode float field to IntegerFieldSpec")
 	}
 	if stringSpec.Name == "" {
 		return nil, errors.Errorf("name field is required for a string field")
@@ -169,7 +177,7 @@ func (s *Schema) getArrayField(fieldSpec map[string]interface{}) (*ArrayField, e
 	var arraySpec ArrayFieldSpec
 	err := mapstructure.Decode(fieldSpec, &arraySpec)
 	if err != nil {
-		return nil, errors.Wrap(err,"could not decode array field to ArrayFieldSpec")
+		return nil, errors.Wrap(err, "could not decode array field to ArrayFieldSpec")
 	}
 	if arraySpec.Name == "" {
 		return nil, errors.Errorf("name field is required for an array field")
@@ -185,7 +193,7 @@ func (s *Schema) getArrayField(fieldSpec map[string]interface{}) (*ArrayField, e
 	}
 	itemField, err := s.getField(itemsFieldSpec)
 	if err != nil {
-		return nil, errors.Wrapf(err,"could not get item field of array field name: %s", arraySpec.Name)
+		return nil, errors.Wrapf(err, "could not get item field of array field name: %s", arraySpec.Name)
 	}
 
 	_, minLenValidation := fieldSpec["min_length"]
@@ -199,7 +207,7 @@ func (s *Schema) getBooleanField(fieldSpec map[string]interface{}) (*BooleanFiel
 	var booleanSpec BooleanFieldSpec
 	err := mapstructure.Decode(fieldSpec, &booleanSpec)
 	if err != nil {
-		return nil, errors.Wrap(err,"could not decode boolean field to BooleanFieldSpec")
+		return nil, errors.Wrap(err, "could not decode boolean field to BooleanFieldSpec")
 	}
 	if booleanSpec.Name == "" {
 		return nil, errors.Errorf("name field is required for a boolean field")
@@ -216,7 +224,7 @@ func (s *Schema) getObjectField(fieldSpec map[string]interface{}) (*ObjectField,
 	var objectSpec ObjectFieldSpec
 	err := mapstructure.Decode(fieldSpec, &objectSpec)
 	if err != nil {
-		return nil, errors.Wrap(err,"could not decode object field to ObjectFieldSpec")
+		return nil, errors.Wrap(err, "could not decode object field to ObjectFieldSpec")
 	}
 	if objectSpec.Name == "" {
 		return nil, errors.Errorf("name field is required for an object field")
@@ -246,6 +254,20 @@ func (s *Schema) getObjectField(fieldSpec map[string]interface{}) (*ObjectField,
 	return objectField, nil
 }
 
+func (s *Schema) getNullField(fieldSpec map[string]interface{}) (*NullField, error) {
+	var nullSpec NullFieldSpec
+	err := mapstructure.Decode(fieldSpec, &nullSpec)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not decode null field to NullFieldSpec")
+	}
+	if nullSpec.Name == "" {
+		return nil, errors.Errorf("name field is required for a null field")
+	}
+
+	nullField := NewNull(nullSpec)
+
+	return nullField, nil
+}
 func (s *Schema) ValidateBytes(input []byte) error {
 	if gjson.ValidBytes(input) {
 		jsonObject := gjson.ParseBytes(input)

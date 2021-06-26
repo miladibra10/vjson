@@ -232,6 +232,20 @@ func TestReadFromFile(t *testing.T) {
 			assert.Nil(t, schema)
 		})
 	})
+	t.Run("null", func(t *testing.T) {
+		t.Run("valid", func(t *testing.T) {
+			schema, err := ReadFromFile("test/null.json")
+			assert.Nil(t, err)
+			assert.Len(t, schema.Fields, 1)
+			assert.Equal(t, "foo", schema.Fields[0].(*NullField).name)
+		})
+
+		t.Run("invalid", func(t *testing.T) {
+			schema, err := ReadFromFile("test/null_invalid.json")
+			assert.NotNil(t, err)
+			assert.Nil(t, schema)
+		})
+	})
 	t.Run("invalid_type", func(t *testing.T) {
 		schema, err := ReadFromFile("test/invalid_type.json")
 		assert.NotNil(t, err)
