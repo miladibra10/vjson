@@ -293,9 +293,9 @@ some validation characteristics could be added to a boolean field with chaining 
 + [Required()](#boolean) sets the field as a required field. validation will return an error if a required field is not present in json object.
 + [ShouldBe(value bool)](#boolean) forces the value of field be equal to `value`
 
-float field could be described by a json for schema parsing.
+boolean field could be described by a json for schema parsing.
 + **`name`**: the name of the field
-+ **`type`**: type value for string field must be `boolean`
++ **`type`**: type value for boolean field must be `boolean`
 + `required`: whether the field is required or not
 + `value`: a boolean (same sa `ShouldBe` in code) that describes that the value of json field.
 
@@ -422,6 +422,32 @@ vjson.Object("foo", vjson.NewSchema(
 }
 ```
 
+## Null
+A null field (a field that its value should be null!) could be created in code like this:
+```go
+vjson.Null("foo")
+```
+
+null field could be described by a json for schema parsing.
++ **`name`**: the name of the field
++ **`type`**: type value for null field must be `null`
+
+### Example
+a null field, named `foo`, could be declared like this:
+
+#### Code
+```go
+vjson.Null("foo")
+```
+
+#### File
+```json
+{
+  "name": "foo",
+  "type": "null"
+}
+```
+
 # Validation
 After creating a schema, you can validate your json objects with these methods:
 
@@ -443,7 +469,9 @@ func main() {
 
 	jsonString := `
 	{
-		"name": "James"
+		
+  "required": true,
+  "value": false"name": "James"
 	}
 	`
 
