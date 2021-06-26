@@ -1,5 +1,5 @@
 # vjson
-[![codecov](https://codecov.io/gh/miladibra10/vjson/branch/master/graph/badge.svg)](#)
+[![codecov](https://codecov.io/gh/miladibra10/vjson/branch/main/graph/badge.svg)](#)
 [![<miladibra10>](https://circleci.com/gh/miladibra10/vjson.svg?style=svg)](#)
 
 [![<ORG_NAME>](https://circleci.com/gh/miladibra10/vjson.svg?style=svg)](https://circleci.com/gh/miladibra10/vjson)
