@@ -278,7 +278,7 @@ func TestNewSchema(t *testing.T) {
 	s := NewSchema(
 		Integer("foo"),
 		String("bar"),
-		)
+	)
 	assert.Len(t, s.Fields, 2)
 }
 

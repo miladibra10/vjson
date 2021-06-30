@@ -57,7 +57,7 @@ func TestBooleanField_Validate(t *testing.T) {
 
 func TestNewBoolean(t *testing.T) {
 	field := NewBoolean(BooleanFieldSpec{
-		Name: "bar",
+		Name:     "bar",
 		Required: true,
 	}, false)
 

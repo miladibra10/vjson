@@ -24,4 +24,3 @@ func TestNullField_Validate(t *testing.T) {
 		assert.Nil(t, err)
 	})
 }
-

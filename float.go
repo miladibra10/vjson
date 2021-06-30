@@ -1,6 +1,5 @@
 package vjson
 
-
 import (
 	"fmt"
 	"github.com/hashicorp/go-multierror"
@@ -51,7 +50,6 @@ func (f *FloatField) Validate(v interface{}) error {
 	if !ok {
 		return errors.Errorf("Value for %s should be a float number", f.name)
 	}
-
 
 	var result error
 	if f.signValidation && f.positive {
@@ -146,4 +144,3 @@ func Float(name string) *FloatField {
 		ranges:          []floatRange{},
 	}
 }
-

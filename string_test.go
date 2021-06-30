@@ -130,7 +130,7 @@ func TestStringField_Validate(t *testing.T) {
 
 func TestNewString(t *testing.T) {
 	field := NewString(StringFieldSpec{
-		Name: "bar",
+		Name:     "bar",
 		Required: true,
 	}, false, false, false, false)
 

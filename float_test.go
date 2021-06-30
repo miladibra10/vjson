@@ -50,7 +50,6 @@ func TestFloatField_Validate(t *testing.T) {
 		err := field.Validate(float64(1))
 		assert.Nil(t, err)
 
-
 		err = field.Validate(float64(-1))
 		assert.NotNil(t, err)
 	})
@@ -59,7 +58,6 @@ func TestFloatField_Validate(t *testing.T) {
 
 		err := field.Validate(float64(1))
 		assert.NotNil(t, err)
-
 
 		err = field.Validate(float64(-1))
 		assert.Nil(t, err)
@@ -70,7 +68,6 @@ func TestFloatField_Validate(t *testing.T) {
 		err := field.Validate(float64(12))
 		assert.Nil(t, err)
 
-
 		err = field.Validate(float64(2))
 		assert.NotNil(t, err)
 	})
@@ -79,7 +76,6 @@ func TestFloatField_Validate(t *testing.T) {
 
 		err := field.Validate(float64(9))
 		assert.Nil(t, err)
-
 
 		err = field.Validate(float64(13))
 		assert.NotNil(t, err)
@@ -100,7 +96,7 @@ func TestFloatField_Validate(t *testing.T) {
 
 func TestNewFloat(t *testing.T) {
 	field := NewFloat(FloatFieldSpec{
-		Name: "bar",
+		Name:     "bar",
 		Required: true,
 		Ranges: []FloatRangeSpec{
 			{

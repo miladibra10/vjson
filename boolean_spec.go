@@ -6,7 +6,6 @@ type BooleanFieldSpec struct {
 	Value    bool   `mapstructure:"value"`
 }
 
-
 func NewBoolean(spec BooleanFieldSpec, valueValidation bool) *BooleanField {
 	return &BooleanField{
 		name:            spec.Name,

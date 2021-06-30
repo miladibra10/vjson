@@ -67,7 +67,6 @@ func TestIntegerField_Validate(t *testing.T) {
 		err := field.Validate(1)
 		assert.Nil(t, err)
 
-
 		err = field.Validate(-1)
 		assert.NotNil(t, err)
 	})
@@ -76,7 +75,6 @@ func TestIntegerField_Validate(t *testing.T) {
 
 		err := field.Validate(1)
 		assert.NotNil(t, err)
-
 
 		err = field.Validate(-1)
 		assert.Nil(t, err)
@@ -87,7 +85,6 @@ func TestIntegerField_Validate(t *testing.T) {
 		err := field.Validate(12)
 		assert.Nil(t, err)
 
-
 		err = field.Validate(2)
 		assert.NotNil(t, err)
 	})
@@ -96,7 +93,6 @@ func TestIntegerField_Validate(t *testing.T) {
 
 		err := field.Validate(9)
 		assert.Nil(t, err)
-
 
 		err = field.Validate(13)
 		assert.NotNil(t, err)
@@ -126,7 +122,7 @@ func TestIntegerField_Validate(t *testing.T) {
 
 func TestNewInteger(t *testing.T) {
 	field := NewInteger(IntegerFieldSpec{
-		Name: "bar",
+		Name:     "bar",
 		Required: true,
 		Ranges: []IntRangeSpec{
 			{

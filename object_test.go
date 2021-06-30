@@ -10,7 +10,6 @@ func TestObjectField_GetName(t *testing.T) {
 	assert.Equal(t, "foo", field.GetName())
 }
 
-
 func TestObjectField_Validate(t *testing.T) {
 	objSchema := Schema{
 		Fields: []Field{
@@ -53,7 +52,7 @@ func TestObjectField_Validate(t *testing.T) {
 		t.Run("valid_struct_value", func(t *testing.T) {
 			field := Object("foo", objSchema)
 
-			obj := struct{
+			obj := struct {
 				Age int `json:"age"`
 			}{10}
 
@@ -66,7 +65,7 @@ func TestObjectField_Validate(t *testing.T) {
 func TestNewObject(t *testing.T) {
 	s := Schema{}
 	field := NewObject(ObjectFieldSpec{
-		Name: "bar",
+		Name:     "bar",
 		Required: true,
 	}, s)
 

@@ -98,7 +98,7 @@ func TestArrayField_Validate(t *testing.T) {
 
 func TestNewArray(t *testing.T) {
 	field := NewArray(ArrayFieldSpec{
-		Name: "bar",
+		Name:     "bar",
 		Required: true,
 	}, String("foo"), false, false)
 

@@ -14,7 +14,6 @@ type FloatFieldSpec struct {
 	Ranges   []FloatRangeSpec `mapstructure:"ranges"`
 }
 
-
 func NewFloat(spec FloatFieldSpec, minValidation, maxValidation, signValidation, rangeValidation bool) *FloatField {
 	ranges := make([]floatRange, 0, len(spec.Ranges))
 	for _, rangeSpec := range spec.Ranges {

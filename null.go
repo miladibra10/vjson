@@ -3,12 +3,11 @@ package vjson
 import "github.com/pkg/errors"
 
 type NullField struct {
-	name     string
+	name string
 }
 
 // To Force Implementing Field interface by NullField
 var _ Field = (*NullField)(nil)
-
 
 func (n *NullField) GetName() string {
 	return n.name
@@ -23,7 +22,6 @@ func (n *NullField) Validate(input interface{}) error {
 
 func Null(name string) *NullField {
 	return &NullField{
-		name:     name,
+		name: name,
 	}
 }
-
