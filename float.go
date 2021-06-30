@@ -12,6 +12,7 @@ type floatRange struct {
 	end   float64
 }
 
+// FloatField is the type for validating floats in a JSON
 type FloatField struct {
 	name     string
 	required bool
@@ -32,17 +33,18 @@ type FloatField struct {
 // To Force Implementing Field interface by IntegerField
 var _ Field = (*FloatField)(nil)
 
+// GetName returns name of the field
 func (f *FloatField) GetName() string {
 	return f.name
 }
 
+// Validate is used for validating a value. it returns an error if the value is invalid.
 func (f *FloatField) Validate(v interface{}) error {
 	if v == nil {
 		if !f.required {
 			return nil
-		} else {
-			return errors.Errorf("Value for %s field is required", f.name)
 		}
+		return errors.Errorf("Value for %s field is required", f.name)
 	}
 
 	value, ok := v.(float64)
@@ -95,41 +97,48 @@ func (f *FloatField) Validate(v interface{}) error {
 	return result
 }
 
+// Required is called to make a field required in a JSON
 func (f *FloatField) Required() *FloatField {
 	f.required = true
 	return f
 }
 
+// Positive is called when we want to force the value to be positive in validation.
 func (f *FloatField) Positive() *FloatField {
 	f.signValidation = true
 	f.positive = true
 	return f
 }
 
+// Negative is called when we want to force the value to be negative in validation.
 func (f *FloatField) Negative() *FloatField {
 	f.signValidation = true
 	f.positive = false
 	return f
 }
 
+// Min is called when we want to set a minimum value for a float value in validation.
 func (f *FloatField) Min(value float64) *FloatField {
 	f.min = value
 	f.minValidation = true
 	return f
 }
 
+// Max is called when we want to set a maximum value for a float value in validation.
 func (f *FloatField) Max(value float64) *FloatField {
 	f.max = value
 	f.maxValidation = true
 	return f
 }
 
+// Range is called when we want to define valid ranges for a float value in validation.
 func (f *FloatField) Range(start, end float64) *FloatField {
 	f.ranges = append(f.ranges, floatRange{start: start, end: end})
 	f.rangeValidation = true
 	return f
 }
 
+// Float is the constructor of a float field
 func Float(name string) *FloatField {
 	return &FloatField{
 		name:            name,

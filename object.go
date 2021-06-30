@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ObjectField is the type for validating another JSON object in a JSON
 type ObjectField struct {
 	name     string
 	required bool
@@ -14,17 +15,18 @@ type ObjectField struct {
 // To Force Implementing Field interface by ObjectField
 var _ Field = (*ObjectField)(nil)
 
+// GetName returns name of the field
 func (o *ObjectField) GetName() string {
 	return o.name
 }
 
+// Validate is used for validating a value. it returns an error if the value is invalid.
 func (o *ObjectField) Validate(v interface{}) error {
 	if v == nil {
 		if !o.required {
 			return nil
-		} else {
-			return errors.Errorf("Value for %s field is required", o.name)
 		}
+		return errors.Errorf("Value for %s field is required", o.name)
 	}
 
 	// The input is either string or an interface{} object
@@ -44,11 +46,13 @@ func (o *ObjectField) Validate(v interface{}) error {
 	return o.schema.ValidateBytes(jsonBytes)
 }
 
+// Required is called to make a field required in a JSON
 func (o *ObjectField) Required() *ObjectField {
 	o.required = true
 	return o
 }
 
+// Object is the constructor of an object field
 func Object(name string, schema Schema) *ObjectField {
 	return &ObjectField{
 		name:     name,

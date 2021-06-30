@@ -1,5 +1,6 @@
 package vjson
 
+// StringFieldSpec is a type used for parsing an StringField
 type StringFieldSpec struct {
 	Name      string   `mapstructure:"name"`
 	Required  bool     `mapstructure:"required"`
@@ -9,6 +10,7 @@ type StringFieldSpec struct {
 	Choices   []string `mapstructure:"choices"`
 }
 
+// NewString receives an StringFieldSpec and returns and StringField
 func NewString(spec StringFieldSpec, minLengthValidation, maxLengthValidation, formatValidation, choiceValidation bool) *StringField {
 	return &StringField{
 		name:              spec.Name,

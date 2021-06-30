@@ -1,15 +1,15 @@
 package vjson
 
-type FieldType string
+type fieldType string
 
 const (
-	IntegerType FieldType = "integer"
-	FloatType   FieldType = "float"
-	StringType  FieldType = "string"
-	ArrayType   FieldType = "array"
-	BooleanType FieldType = "boolean"
-	ObjectType  FieldType = "object"
-	NullType    FieldType = "null"
+	integerType fieldType = "integer"
+	floatType   fieldType = "float"
+	stringType  fieldType = "string"
+	arrayType   fieldType = "array"
+	booleanType fieldType = "boolean"
+	objectType  fieldType = "object"
+	nullType    fieldType = "null"
 )
 
-const TypeKey = "type"
+const typeKey = "type"

@@ -10,14 +10,17 @@ import (
 	"os"
 )
 
+// Schema is the type for declaring a JSON schema and validating a json object.
 type Schema struct {
 	Fields []Field
 }
 
+// SchemaSpec is used for parsing a Schema
 type SchemaSpec struct {
 	Fields []map[string]interface{} `json:"fields"`
 }
 
+// UnmarshalJSON is implemented for parsing a Schema. it overrides json.Unmarshal behaviour.
 func (s *Schema) UnmarshalJSON(bytes []byte) error {
 	var schemaSpec SchemaSpec
 	err := json.Unmarshal(bytes, &schemaSpec)
@@ -41,13 +44,13 @@ func (s *Schema) UnmarshalJSON(bytes []byte) error {
 }
 
 func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
-	fieldTypeRaw, found := fieldSpec[TypeKey]
+	fieldTypeRaw, found := fieldSpec[typeKey]
 	if found {
 		fieldTypeStr, ok := fieldTypeRaw.(string)
 		if ok {
-			fieldType := FieldType(fieldTypeStr)
+			fieldType := fieldType(fieldTypeStr)
 			switch fieldType {
-			case IntegerType:
+			case integerType:
 				{
 					field, err := s.getIntegerField(fieldSpec)
 					if err != nil {
@@ -55,7 +58,7 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
-			case FloatType:
+			case floatType:
 				{
 					field, err := s.getFloatField(fieldSpec)
 					if err != nil {
@@ -63,7 +66,7 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
-			case StringType:
+			case stringType:
 				{
 					field, err := s.getStringField(fieldSpec)
 					if err != nil {
@@ -71,7 +74,7 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
-			case ArrayType:
+			case arrayType:
 				{
 					field, err := s.getArrayField(fieldSpec)
 					if err != nil {
@@ -79,7 +82,7 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
-			case BooleanType:
+			case booleanType:
 				{
 					field, err := s.getBooleanField(fieldSpec)
 					if err != nil {
@@ -87,7 +90,7 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
-			case ObjectType:
+			case objectType:
 				{
 					field, err := s.getObjectField(fieldSpec)
 					if err != nil {
@@ -95,7 +98,7 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
-			case NullType:
+			case nullType:
 				{
 					field, err := s.getNullField(fieldSpec)
 					if err != nil {
@@ -268,6 +271,9 @@ func (s *Schema) getNullField(fieldSpec map[string]interface{}) (*NullField, err
 
 	return nullField, nil
 }
+
+// ValidateBytes receives a byte array of a json object and validates it according to the specified Schema.
+// it returns an error if the input is invalid.
 func (s *Schema) ValidateBytes(input []byte) error {
 	if gjson.ValidBytes(input) {
 		jsonObject := gjson.ParseBytes(input)
@@ -276,6 +282,7 @@ func (s *Schema) ValidateBytes(input []byte) error {
 	return errors.Errorf("could not parse json input.")
 }
 
+// ValidateString is like ValidateBytes but it receives the json object as string input.
 func (s *Schema) ValidateString(input string) error {
 	if gjson.Valid(input) {
 		jsonObject := gjson.Parse(input)
@@ -297,14 +304,17 @@ func (s *Schema) validateJSON(json gjson.Result) error {
 	return result
 }
 
+// NewSchema is the constructor for Schema. it receives a list of Field in its arguments.
 func NewSchema(fields ...Field) Schema {
 	return Schema{Fields: fields}
 }
 
+// ReadFromString is for parsing a Schema from a string input.
 func ReadFromString(input string) (*Schema, error) {
 	return ReadFromBytes([]byte(input))
 }
 
+// ReadFromBytes is for parsing a Schema from a byte array input.
 func ReadFromBytes(input []byte) (*Schema, error) {
 	var s Schema
 	err := json.Unmarshal(input, &s)
@@ -314,6 +324,7 @@ func ReadFromBytes(input []byte) (*Schema, error) {
 	return &s, nil
 }
 
+// ReadFromFile is for parsing a Schema from a file input.
 func ReadFromFile(filePath string) (*Schema, error) {
 	file, err := os.Open(filePath)
 	if err != nil {

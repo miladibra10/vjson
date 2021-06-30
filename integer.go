@@ -12,6 +12,7 @@ type intRange struct {
 	end   int
 }
 
+// IntegerField is the type for validating integers in a JSON
 type IntegerField struct {
 	name     string
 	required bool
@@ -32,17 +33,18 @@ type IntegerField struct {
 // To Force Implementing Field interface by IntegerField
 var _ Field = (*IntegerField)(nil)
 
+// GetName returns name of the field
 func (i *IntegerField) GetName() string {
 	return i.name
 }
 
+// Validate is used for validating a value. it returns an error if the value is invalid.
 func (i *IntegerField) Validate(v interface{}) error {
 	if v == nil {
 		if !i.required {
 			return nil
-		} else {
-			return errors.Errorf("Value for %s field is required", i.name)
 		}
+		return errors.Errorf("Value for %s field is required", i.name)
 	}
 	var value int
 	var intOK bool
@@ -104,41 +106,48 @@ func (i *IntegerField) Validate(v interface{}) error {
 	return result
 }
 
+// Required is called to make a field required in a JSON
 func (i *IntegerField) Required() *IntegerField {
 	i.required = true
 	return i
 }
 
+// Positive is called when we want to force the value to be positive in validation.
 func (i *IntegerField) Positive() *IntegerField {
 	i.signValidation = true
 	i.positive = true
 	return i
 }
 
+// Negative is called when we want to force the value to be negative in validation.
 func (i *IntegerField) Negative() *IntegerField {
 	i.signValidation = true
 	i.positive = false
 	return i
 }
 
+// Min is called when we want to set a minimum value for an integer value in validation.
 func (i *IntegerField) Min(value int) *IntegerField {
 	i.min = value
 	i.minValidation = true
 	return i
 }
 
+// Max is called when we want to set a maximum value for an integer value in validation.
 func (i *IntegerField) Max(value int) *IntegerField {
 	i.max = value
 	i.maxValidation = true
 	return i
 }
 
+// Range is called when we want to define valid ranges for an integer value in validation.
 func (i *IntegerField) Range(start, end int) *IntegerField {
 	i.ranges = append(i.ranges, intRange{start: start, end: end})
 	i.rangeValidation = true
 	return i
 }
 
+// Integer is the constructor of an integer field
 func Integer(name string) *IntegerField {
 	return &IntegerField{
 		name:            name,

@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// StringField is the type for validating strings in a JSON
 type StringField struct {
 	name     string
 	required bool
@@ -27,15 +28,18 @@ type StringField struct {
 // To Force Implementing Field interface by StringField
 var _ Field = (*StringField)(nil)
 
+// GetName returns name of the field
 func (s *StringField) GetName() string {
 	return s.name
 }
 
+// Required is called to make a field required in a JSON
 func (s *StringField) Required() *StringField {
 	s.required = true
 	return s
 }
 
+// MinLength is called to set a minimum length to a string field
 func (s *StringField) MinLength(length int) *StringField {
 	if length < 0 {
 		return s
@@ -45,6 +49,7 @@ func (s *StringField) MinLength(length int) *StringField {
 	return s
 }
 
+// MaxLength is called to set a maximum length to a string field
 func (s *StringField) MaxLength(length int) *StringField {
 	if length < 0 {
 		return s
@@ -54,25 +59,27 @@ func (s *StringField) MaxLength(length int) *StringField {
 	return s
 }
 
+// Format is called to set a regex format for validation of a string field
 func (s *StringField) Format(format string) *StringField {
 	s.format = format
 	s.validateFormat = true
 	return s
 }
 
+// Choices is called to set valid choices of a string field in validation
 func (s *StringField) Choices(choices ...string) *StringField {
 	s.choices = choices
 	s.validateChoices = true
 	return s
 }
 
+// Validate is used for validating a value. it returns an error if the value is invalid.
 func (s *StringField) Validate(value interface{}) error {
 	if value == nil {
 		if !s.required {
 			return nil
-		} else {
-			return errors.Errorf("Value for %s field is required", s.name)
 		}
+		return errors.Errorf("Value for %s field is required", s.name)
 	}
 
 	stringValue, ok := value.(string)
@@ -121,6 +128,7 @@ func (s *StringField) Validate(value interface{}) error {
 	return result
 }
 
+// String is the constructor of a string field
 func String(name string) *StringField {
 	return &StringField{
 		name:     name,
