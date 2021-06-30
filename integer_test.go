@@ -27,14 +27,14 @@ func TestIntegerField_Validate(t *testing.T) {
 		t.Run("valid_value", func(t *testing.T) {
 			field := Integer("foo")
 
-			// We asume we get real float values because be use gjson library
+			// We assume we get real float values because be use gjson library
 			err := field.Validate(2)
 			assert.Nil(t, err)
 		})
 		t.Run("valid_value_float", func(t *testing.T) {
 			field := Integer("foo")
 
-			// We asume we get real float values because be use gjson library
+			// We assume we get real float values because be use gjson library
 			err := field.Validate(float64(2))
 			assert.Nil(t, err)
 		})
@@ -49,14 +49,14 @@ func TestIntegerField_Validate(t *testing.T) {
 		t.Run("valid_value", func(t *testing.T) {
 			field := Integer("foo").Required()
 
-			// We asume we get real float values because be use gjson library
+			// We assume we get real float values because be use gjson library
 			err := field.Validate(2)
 			assert.Nil(t, err)
 		})
 		t.Run("valid_value_float", func(t *testing.T) {
 			field := Integer("foo").Required()
 
-			// We asume we get real float values because be use gjson library
+			// We assume we get real float values because be use gjson library
 			err := field.Validate(float64(2))
 			assert.Nil(t, err)
 		})
