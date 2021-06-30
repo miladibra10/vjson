@@ -1,5 +1,6 @@
 # vjson
 [![codecov](https://codecov.io/gh/miladibra10/vjson/branch/main/graph/badge.svg)](#)
+[![Go Report Card](https://goreportcard.com/badge/github.com/miladibra10/vjson)](https://goreportcard.com/report/github.com/miladibra10/vjson)
 [![<miladibra10>](https://circleci.com/gh/miladibra10/vjson.svg?style=svg)](#)
 
 **vjson**  is a Go package that helps to validate JSON objects in a declarative way.
