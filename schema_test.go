@@ -287,3 +287,41 @@ func TestSchema_UnmarshalJSON(t *testing.T) {
 	err := s.UnmarshalJSON([]byte("{{"))
 	assert.NotNil(t, err)
 }
+
+func BenchmarkSchema_ValidateString(b *testing.B) {
+	s := NewSchema(
+		String("first_name").Required().MinLength(2),
+		String("last_name").Required().MinLength(2),
+		Integer("age").Positive(),
+		Array("cars", String("car").Choices("pride", "peugeot", "audi", "ford")),
+		Float("avg").Range(0, 1),
+		Boolean("is_active").ShouldBe(true),
+		Object("test", NewSchema(
+			String("field").Required(),
+		)).Required(),
+		Null("null"),
+	)
+	jsonStr := `{"first_name": "abbas", "last_name": "booazar", "age": 30, "cars":["pride", "audi"], "avg": 0.97, "is_active": true, "test":{"field": "yes"}}`
+	for i := 0; i < b.N; i++ {
+		_ = s.ValidateString(jsonStr)
+	}
+}
+
+func BenchmarkSchema_ValidateBytes(b *testing.B) {
+	s := NewSchema(
+		String("first_name").Required().MinLength(2),
+		String("last_name").Required().MinLength(2),
+		Integer("age").Positive(),
+		Array("cars", String("car").Choices("pride", "peugeot", "audi", "ford")),
+		Float("avg").Range(0, 1),
+		Boolean("is_active").ShouldBe(true),
+		Object("test", NewSchema(
+			String("field").Required(),
+		)).Required(),
+		Null("null"),
+	)
+	jsonBytes := []byte(`{"first_name": "abbas", "last_name": "booazar", "age": 30, "cars":["pride", "audi"], "avg": 0.97, "is_active": true, "test":{"field": "yes"}}`)
+	for i := 0; i < b.N; i++ {
+		_ = s.ValidateBytes(jsonBytes)
+	}
+}
