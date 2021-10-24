@@ -510,3 +510,19 @@ func main() {
 	
 }
 ```
+
+# Benchmarks
+
+Results of benchmarking validation functions highly depends on types and number of fields.
+
+two simple benchmarks (exists in `schema_test.go` file) with using all features of `vjson` gives this result:
+
+```
+goos: linux
+goarch: amd64
+pkg: github.com/miladibra10/vjson
+BenchmarkSchema_ValidateString-8          416664              2792 ns/op
+BenchmarkSchema_ValidateBytes-8           431734              2858 ns/op
+PASS
+ok      github.com/miladibra10/vjson    2.461s
+```
