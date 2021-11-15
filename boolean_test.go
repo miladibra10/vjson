@@ -1,8 +1,9 @@
 package vjson
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBooleanField_GetName(t *testing.T) {
@@ -62,6 +63,6 @@ func TestNewBoolean(t *testing.T) {
 	}, false)
 
 	assert.NotNil(t, field)
-	assert.Equal(t, "bar", field.name)
-	assert.Equal(t, false, field.valueValidation)
+	assert.Equal(t, "bar", field.Name)
+	assert.Equal(t, false, field.FieldValueValidation)
 }

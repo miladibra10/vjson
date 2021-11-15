@@ -7,15 +7,15 @@ import (
 
 // ArrayField is the type for validating arrays in a JSON
 type ArrayField struct {
-	name     string
-	required bool
-	items    Field
+	Name         string `json:"name"`
+	FieldRequred bool   `json:"required"`
+	Items        Field  `json:"items"`
 
-	minLength           int
-	minLengthValidation bool
+	FieldMinLength           int  `json:"minLength"`
+	FieldMinLengthValidation bool `json:"minLengthValidation"`
 
-	maxLength           int
-	maxLengthValidation bool
+	FieldMaxLength           int  `json:"maxLength"`
+	FieldMaxLengthValidation bool `json:"maxLengthValidation"`
 }
 
 // To Force Implementing Field interface by ArrayField
@@ -23,40 +23,40 @@ var _ Field = (*ArrayField)(nil)
 
 // GetName returns name of the field
 func (a *ArrayField) GetName() string {
-	return a.name
+	return a.Name
 }
 
 // Validate is used for validating a value. it returns an error if the value is invalid.
 func (a *ArrayField) Validate(v interface{}) error {
 	if v == nil {
-		if !a.required {
+		if !a.FieldRequred {
 			return nil
 		}
-		return errors.Errorf("Value for %s field is required", a.name)
+		return errors.Errorf("Value for %s field is required", a.Name)
 	}
 
 	values, ok := v.([]interface{})
 	if !ok {
-		return errors.Errorf("Value of %s should be array", a.name)
+		return errors.Errorf("Value of %s should be array", a.Name)
 	}
 
 	var result error
-	if a.minLengthValidation {
-		if len(values) < a.minLength {
-			result = multierror.Append(result, errors.Errorf("length of %s array should be at least %d", a.name, a.minLength))
+	if a.FieldMinLengthValidation {
+		if len(values) < a.FieldMinLength {
+			result = multierror.Append(result, errors.Errorf("length of %s array should be at least %d", a.Name, a.FieldMinLength))
 		}
 	}
 
-	if a.maxLengthValidation {
-		if len(values) > a.maxLength {
-			result = multierror.Append(result, errors.Errorf("length of %s array should be at most %d", a.name, a.maxLength))
+	if a.FieldMaxLengthValidation {
+		if len(values) > a.FieldMaxLength {
+			result = multierror.Append(result, errors.Errorf("length of %s array should be at most %d", a.Name, a.FieldMaxLength))
 		}
 	}
 
 	for _, value := range values {
-		err := a.items.Validate(value)
+		err := a.Items.Validate(value)
 		if err != nil {
-			result = multierror.Append(result, errors.Wrapf(err, "%v item is invalid in %s array", value, a.name))
+			result = multierror.Append(result, errors.Wrapf(err, "%v item is invalid in %s array", value, a.Name))
 		}
 	}
 	return result
@@ -64,29 +64,29 @@ func (a *ArrayField) Validate(v interface{}) error {
 
 // Required is called to make a field required in a JSON
 func (a *ArrayField) Required() *ArrayField {
-	a.required = true
+	a.FieldRequred = true
 	return a
 }
 
 // MinLength is called to set minimum length for an array field in a JSON
 func (a *ArrayField) MinLength(length int) *ArrayField {
-	a.minLength = length
-	a.minLengthValidation = true
+	a.FieldMinLength = length
+	a.FieldMinLengthValidation = true
 	return a
 }
 
 // MaxLength is called to set maximum length for an array field in a JSON
 func (a *ArrayField) MaxLength(length int) *ArrayField {
-	a.maxLength = length
-	a.maxLengthValidation = true
+	a.FieldMaxLength = length
+	a.FieldMaxLengthValidation = true
 	return a
 }
 
 // Array is the constructor of an array field.
 func Array(name string, itemField Field) *ArrayField {
 	return &ArrayField{
-		name:     name,
-		required: false,
-		items:    itemField,
+		Name:         name,
+		FieldRequred: false,
+		Items:        itemField,
 	}
 }

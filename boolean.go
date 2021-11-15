@@ -4,10 +4,10 @@ import "github.com/pkg/errors"
 
 // BooleanField is the type for validating booleans in a JSON
 type BooleanField struct {
-	name            string
-	required        bool
-	valueValidation bool
-	value           bool
+	Name                 string `json:"name"`
+	FieldRequired        bool   `json:"required"`
+	FieldValueValidation bool   `json:"valueValidation"`
+	Value                bool   `json:"value"`
 }
 
 // To Force Implementing Field interface by BooleanField
@@ -15,27 +15,27 @@ var _ Field = (*BooleanField)(nil)
 
 // GetName returns name of the field
 func (b *BooleanField) GetName() string {
-	return b.name
+	return b.Name
 }
 
 // Validate is used for validating a value. it returns an error if the value is invalid.
 func (b *BooleanField) Validate(v interface{}) error {
 	if v == nil {
-		if !b.required {
+		if !b.FieldRequired {
 			return nil
 		}
-		return errors.Errorf("Value for %s field is required", b.name)
+		return errors.Errorf("Value for %s field is required", b.Name)
 	}
 
 	value, ok := v.(bool)
 
 	if !ok {
-		return errors.Errorf("Value for %s should be a boolean", b.name)
+		return errors.Errorf("Value for %s should be a boolean", b.Name)
 	}
 
-	if b.valueValidation {
-		if value != b.value {
-			return errors.Errorf("Value for %s should be a %v", b.name, b.value)
+	if b.FieldValueValidation {
+		if value != b.Value {
+			return errors.Errorf("Value for %s should be a %v", b.Name, b.Value)
 		}
 	}
 
@@ -44,21 +44,21 @@ func (b *BooleanField) Validate(v interface{}) error {
 
 // Required is called to make a field required in a JSON
 func (b *BooleanField) Required() *BooleanField {
-	b.required = true
+	b.FieldRequired = true
 	return b
 }
 
 // ShouldBe is called for setting a value for checking a boolean.
 func (b *BooleanField) ShouldBe(value bool) *BooleanField {
-	b.value = value
-	b.valueValidation = true
+	b.Value = value
+	b.FieldValueValidation = true
 	return b
 }
 
 // Boolean is the constructor of a boolean field
 func Boolean(name string) *BooleanField {
 	return &BooleanField{
-		name:     name,
-		required: false,
+		Name:          name,
+		FieldRequired: false,
 	}
 }

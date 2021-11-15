@@ -2,32 +2,33 @@ package vjson
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"strings"
 )
 
 type floatRange struct {
-	start float64
-	end   float64
+	Start float64 `json:"start"`
+	End   float64 `json:"end"`
 }
 
 // FloatField is the type for validating floats in a JSON
 type FloatField struct {
-	name     string
-	required bool
+	Name          string `json:"name"`
+	FieldRequired bool   `json:"required"`
 
-	min           float64
-	minValidation bool
+	FieldMin           float64 `json:"min"`
+	FieldMinValidation bool    `json:"minValidation"`
 
-	max           float64
-	maxValidation bool
+	FieldMax           float64 `json:"max"`
+	FieldMaxValidation bool    `json:"maxValidation"`
 
-	signValidation bool
-	positive       bool
+	FieldSignValidation bool `json:"signValidation"`
+	FieldPositive       bool `json:"positive"`
 
-	rangeValidation bool
-	ranges          []floatRange
+	FieldRangeValidation bool         `json:"rangeValidation"`
+	FieldRanges          []floatRange `json:"ranges"`
 }
 
 // To Force Implementing Field interface by IntegerField
@@ -35,51 +36,51 @@ var _ Field = (*FloatField)(nil)
 
 // GetName returns name of the field
 func (f *FloatField) GetName() string {
-	return f.name
+	return f.Name
 }
 
 // Validate is used for validating a value. it returns an error if the value is invalid.
 func (f *FloatField) Validate(v interface{}) error {
 	if v == nil {
-		if !f.required {
+		if !f.FieldRequired {
 			return nil
 		}
-		return errors.Errorf("Value for %s field is required", f.name)
+		return errors.Errorf("Value for %s field is required", f.Name)
 	}
 
 	value, ok := v.(float64)
 
 	if !ok {
-		return errors.Errorf("Value for %s should be a float number", f.name)
+		return errors.Errorf("Value for %s should be a float number", f.Name)
 	}
 
 	var result error
-	if f.signValidation && f.positive {
+	if f.FieldSignValidation && f.FieldPositive {
 		if value < 0 {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be a positive float", f.name))
+			result = multierror.Append(result, errors.Errorf("Value for %s should be a positive float", f.Name))
 		}
-	} else if f.signValidation && !f.positive {
+	} else if f.FieldSignValidation && !f.FieldPositive {
 		if value > 0 {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be a negative float", f.name))
+			result = multierror.Append(result, errors.Errorf("Value for %s should be a negative float", f.Name))
 		}
 	}
 
-	if f.minValidation {
-		if value < f.min {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be at least %f", f.name, f.min))
+	if f.FieldMinValidation {
+		if value < f.FieldMin {
+			result = multierror.Append(result, errors.Errorf("Value for %s should be at least %f", f.Name, f.FieldMin))
 		}
 	}
 
-	if f.maxValidation {
-		if value > f.max {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be at most %f", f.name, f.max))
+	if f.FieldMaxValidation {
+		if value > f.FieldMax {
+			result = multierror.Append(result, errors.Errorf("Value for %s should be at most %f", f.Name, f.FieldMax))
 		}
 	}
 
-	if f.rangeValidation {
+	if f.FieldRangeValidation {
 		inRange := false
-		for _, r := range f.ranges {
-			if value >= r.start && value <= r.end {
+		for _, r := range f.FieldRanges {
+			if value >= r.Start && value <= r.End {
 				inRange = true
 				break
 			}
@@ -87,10 +88,10 @@ func (f *FloatField) Validate(v interface{}) error {
 
 		if !inRange {
 			var ranges strings.Builder
-			for _, r := range f.ranges {
-				ranges.WriteString(fmt.Sprintf("[%f,%f] ", r.start, r.end))
+			for _, r := range f.FieldRanges {
+				ranges.WriteString(fmt.Sprintf("[%f,%f] ", r.Start, r.End))
 			}
-			result = multierror.Append(result, errors.Errorf("Value for %s should be in one of these ranges: %s", f.name, ranges.String()))
+			result = multierror.Append(result, errors.Errorf("Value for %s should be in one of these ranges: %s", f.Name, ranges.String()))
 		}
 	}
 
@@ -99,57 +100,57 @@ func (f *FloatField) Validate(v interface{}) error {
 
 // Required is called to make a field required in a JSON
 func (f *FloatField) Required() *FloatField {
-	f.required = true
+	f.FieldRequired = true
 	return f
 }
 
 // Positive is called when we want to force the value to be positive in validation.
 func (f *FloatField) Positive() *FloatField {
-	f.signValidation = true
-	f.positive = true
+	f.FieldSignValidation = true
+	f.FieldPositive = true
 	return f
 }
 
 // Negative is called when we want to force the value to be negative in validation.
 func (f *FloatField) Negative() *FloatField {
-	f.signValidation = true
-	f.positive = false
+	f.FieldSignValidation = true
+	f.FieldPositive = false
 	return f
 }
 
 // Min is called when we want to set a minimum value for a float value in validation.
 func (f *FloatField) Min(value float64) *FloatField {
-	f.min = value
-	f.minValidation = true
+	f.FieldMin = value
+	f.FieldMinValidation = true
 	return f
 }
 
 // Max is called when we want to set a maximum value for a float value in validation.
 func (f *FloatField) Max(value float64) *FloatField {
-	f.max = value
-	f.maxValidation = true
+	f.FieldMax = value
+	f.FieldMaxValidation = true
 	return f
 }
 
 // Range is called when we want to define valid ranges for a float value in validation.
 func (f *FloatField) Range(start, end float64) *FloatField {
-	f.ranges = append(f.ranges, floatRange{start: start, end: end})
-	f.rangeValidation = true
+	f.FieldRanges = append(f.FieldRanges, floatRange{Start: start, End: end})
+	f.FieldRangeValidation = true
 	return f
 }
 
 // Float is the constructor of a float field
 func Float(name string) *FloatField {
 	return &FloatField{
-		name:            name,
-		required:        false,
-		min:             0,
-		minValidation:   false,
-		max:             0,
-		maxValidation:   false,
-		signValidation:  false,
-		positive:        false,
-		rangeValidation: false,
-		ranges:          []floatRange{},
+		Name:                 name,
+		FieldRequired:        false,
+		FieldMin:             0,
+		FieldMinValidation:   false,
+		FieldMax:             0,
+		FieldMaxValidation:   false,
+		FieldSignValidation:  false,
+		FieldPositive:        false,
+		FieldRangeValidation: false,
+		FieldRanges:          []floatRange{},
 	}
 }

@@ -8,6 +8,6 @@ type NullFieldSpec struct {
 // NewNull receives an NullFieldSpec and returns and NullField
 func NewNull(spec NullFieldSpec) *NullField {
 	return &NullField{
-		name: spec.Name,
+		Name: spec.Name,
 	}
 }

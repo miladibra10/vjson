@@ -1,28 +1,29 @@
 package vjson
 
 import (
-	"github.com/hashicorp/go-multierror"
-	"github.com/pkg/errors"
 	"regexp"
 	"strings"
+
+	"github.com/hashicorp/go-multierror"
+	"github.com/pkg/errors"
 )
 
 // StringField is the type for validating strings in a JSON
 type StringField struct {
-	name     string
-	required bool
+	Name          string `json:"name"`
+	FieldRequired bool   `json:"required"`
 
-	validateMinLength bool
-	minLength         int
+	FieldValidateMinLength bool `json:"validateMinLength"`
+	FieldMinLength         int  `json:"minLength"`
 
-	validateMaxLength bool
-	maxLength         int
+	FieldValidateMaxLength bool `json:"validateMaxLength"`
+	FieldMaxLength         int  `json:"maxLength"`
 
-	validateFormat bool
-	format         string
+	FieldValidateFormat bool   `json:"validateFormat"`
+	FieldFormat         string `json:"format"`
 
-	validateChoices bool
-	choices         []string
+	FieldValidateChoices bool     `json:"validateChoices"`
+	FieldChoices         []string `json:"choices"`
 }
 
 // To Force Implementing Field interface by StringField
@@ -30,12 +31,12 @@ var _ Field = (*StringField)(nil)
 
 // GetName returns name of the field
 func (s *StringField) GetName() string {
-	return s.name
+	return s.Name
 }
 
 // Required is called to make a field required in a JSON
 func (s *StringField) Required() *StringField {
-	s.required = true
+	s.FieldRequired = true
 	return s
 }
 
@@ -44,8 +45,8 @@ func (s *StringField) MinLength(length int) *StringField {
 	if length < 0 {
 		return s
 	}
-	s.minLength = length
-	s.validateMinLength = true
+	s.FieldMinLength = length
+	s.FieldValidateMinLength = true
 	return s
 }
 
@@ -54,74 +55,74 @@ func (s *StringField) MaxLength(length int) *StringField {
 	if length < 0 {
 		return s
 	}
-	s.maxLength = length
-	s.validateMaxLength = true
+	s.FieldMaxLength = length
+	s.FieldValidateMaxLength = true
 	return s
 }
 
 // Format is called to set a regex format for validation of a string field
 func (s *StringField) Format(format string) *StringField {
-	s.format = format
-	s.validateFormat = true
+	s.FieldFormat = format
+	s.FieldValidateFormat = true
 	return s
 }
 
 // Choices is called to set valid choices of a string field in validation
 func (s *StringField) Choices(choices ...string) *StringField {
-	s.choices = choices
-	s.validateChoices = true
+	s.FieldChoices = choices
+	s.FieldValidateChoices = true
 	return s
 }
 
 // Validate is used for validating a value. it returns an error if the value is invalid.
 func (s *StringField) Validate(value interface{}) error {
 	if value == nil {
-		if !s.required {
+		if !s.FieldRequired {
 			return nil
 		}
-		return errors.Errorf("Value for %s field is required", s.name)
+		return errors.Errorf("Value for %s field is required", s.Name)
 	}
 
 	stringValue, ok := value.(string)
 
 	if !ok {
-		return errors.Errorf("Value for %s should be a string", s.name)
+		return errors.Errorf("Value for %s should be a string", s.Name)
 	}
 
 	var result error
 
-	if s.validateMinLength {
-		if len(stringValue) < s.minLength {
-			result = multierror.Append(result, errors.Errorf("Value for %s field should have at least %d characters", s.name, s.minLength))
+	if s.FieldValidateMinLength {
+		if len(stringValue) < s.FieldMinLength {
+			result = multierror.Append(result, errors.Errorf("Value for %s field should have at least %d characters", s.Name, s.FieldMinLength))
 		}
 	}
 
-	if s.validateMaxLength {
-		if len(stringValue) > s.maxLength {
-			result = multierror.Append(result, errors.Errorf("Value for %s field should have at most %d characters", s.name, s.maxLength))
+	if s.FieldValidateMaxLength {
+		if len(stringValue) > s.FieldMaxLength {
+			result = multierror.Append(result, errors.Errorf("Value for %s field should have at most %d characters", s.Name, s.FieldMaxLength))
 		}
 	}
 
-	if s.validateChoices {
-		for _, choice := range s.choices {
+	if s.FieldValidateChoices {
+		for _, choice := range s.FieldChoices {
 			if stringValue == choice {
 				return nil
 			}
 		}
-		result = multierror.Append(result, errors.Errorf("Value for %s field should be one of: [%s] values", s.name, strings.Join(s.choices, ",")))
+		result = multierror.Append(result, errors.Errorf("Value for %s field should be one of: [%s] values", s.Name, strings.Join(s.FieldChoices, ",")))
 	}
 
-	if s.validateFormat {
-		r, err := regexp.Compile(s.format)
+	if s.FieldValidateFormat {
+		r, err := regexp.Compile(s.FieldFormat)
 		if err != nil {
-			result = multierror.Append(result, errors.Wrapf(err, "Invalid StringField format string for field %s", s.name))
+			result = multierror.Append(result, errors.Wrapf(err, "Invalid StringField format string for field %s", s.Name))
 			return result
 		}
 
 		isValidFormat := r.MatchString(stringValue)
 
 		if !isValidFormat {
-			result = multierror.Append(result, errors.Wrapf(err, "Invalid StringField format string for field %s", s.name))
+			result = multierror.Append(result, errors.Wrapf(err, "Invalid StringField format string for field %s", s.Name))
 		}
 	}
 
@@ -131,8 +132,8 @@ func (s *StringField) Validate(value interface{}) error {
 // String is the constructor of a string field
 func String(name string) *StringField {
 	return &StringField{
-		name:     name,
-		required: false,
-		choices:  []string{},
+		Name:          name,
+		FieldRequired: false,
+		FieldChoices:  []string{},
 	}
 }

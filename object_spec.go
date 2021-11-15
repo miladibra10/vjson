@@ -10,8 +10,8 @@ type ObjectFieldSpec struct {
 // NewObject receives an ObjectFieldSpec and returns and ObjectField
 func NewObject(spec ObjectFieldSpec, schema Schema) *ObjectField {
 	return &ObjectField{
-		name:     spec.Name,
-		required: spec.Required,
-		schema:   schema,
+		Name:          spec.Name,
+		FieldRequired: spec.Required,
+		FieldSchema:   schema,
 	}
 }

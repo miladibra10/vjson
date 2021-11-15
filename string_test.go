@@ -1,8 +1,9 @@
 package vjson
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestStringField_GetName(t *testing.T) {
@@ -49,8 +50,8 @@ func TestStringField_Validate(t *testing.T) {
 		t.Run("invalid_length", func(t *testing.T) {
 			field := String("foo").MinLength(-1)
 
-			assert.Equal(t, false, field.validateMinLength)
-			assert.Equal(t, 0, field.minLength)
+			assert.Equal(t, false, field.FieldValidateMinLength)
+			assert.Equal(t, 0, field.FieldMinLength)
 		})
 		t.Run("valid_length", func(t *testing.T) {
 			field := String("foo").MinLength(5)
@@ -69,8 +70,8 @@ func TestStringField_Validate(t *testing.T) {
 		t.Run("invalid_length", func(t *testing.T) {
 			field := String("foo").MaxLength(-1)
 
-			assert.Equal(t, false, field.validateMaxLength)
-			assert.Equal(t, 0, field.maxLength)
+			assert.Equal(t, false, field.FieldValidateMaxLength)
+			assert.Equal(t, 0, field.FieldMaxLength)
 		})
 		t.Run("valid_length", func(t *testing.T) {
 			field := String("foo").MaxLength(5)
@@ -135,9 +136,9 @@ func TestNewString(t *testing.T) {
 	}, false, false, false, false)
 
 	assert.NotNil(t, field)
-	assert.Equal(t, "bar", field.name)
-	assert.Equal(t, false, field.validateMinLength)
-	assert.Equal(t, false, field.validateMaxLength)
-	assert.Equal(t, false, field.validateFormat)
-	assert.Equal(t, false, field.validateChoices)
+	assert.Equal(t, "bar", field.Name)
+	assert.Equal(t, false, field.FieldValidateMinLength)
+	assert.Equal(t, false, field.FieldValidateMaxLength)
+	assert.Equal(t, false, field.FieldValidateFormat)
+	assert.Equal(t, false, field.FieldValidateChoices)
 }

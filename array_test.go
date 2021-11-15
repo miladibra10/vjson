@@ -1,8 +1,9 @@
 package vjson
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestArrayField_GetName(t *testing.T) {
@@ -103,7 +104,7 @@ func TestNewArray(t *testing.T) {
 	}, String("foo"), false, false)
 
 	assert.NotNil(t, field)
-	assert.Equal(t, "bar", field.name)
-	assert.Equal(t, false, field.minLengthValidation)
-	assert.Equal(t, false, field.maxLengthValidation)
+	assert.Equal(t, "bar", field.Name)
+	assert.Equal(t, false, field.FieldMinLengthValidation)
+	assert.Equal(t, false, field.FieldMaxLengthValidation)
 }

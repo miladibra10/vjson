@@ -13,15 +13,15 @@ type StringFieldSpec struct {
 // NewString receives an StringFieldSpec and returns and StringField
 func NewString(spec StringFieldSpec, minLengthValidation, maxLengthValidation, formatValidation, choiceValidation bool) *StringField {
 	return &StringField{
-		name:              spec.Name,
-		required:          spec.Required,
-		validateMinLength: minLengthValidation,
-		minLength:         spec.MinLength,
-		validateMaxLength: maxLengthValidation,
-		maxLength:         spec.MaxLength,
-		validateFormat:    formatValidation,
-		format:            spec.Format,
-		validateChoices:   choiceValidation,
-		choices:           spec.Choices,
+		Name:                   spec.Name,
+		FieldRequired:          spec.Required,
+		FieldValidateMinLength: minLengthValidation,
+		FieldMinLength:         spec.MinLength,
+		FieldValidateMaxLength: maxLengthValidation,
+		FieldMaxLength:         spec.MaxLength,
+		FieldValidateFormat:    formatValidation,
+		FieldFormat:            spec.Format,
+		FieldValidateChoices:   choiceValidation,
+		FieldChoices:           spec.Choices,
 	}
 }

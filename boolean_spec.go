@@ -10,9 +10,9 @@ type BooleanFieldSpec struct {
 // NewBoolean receives an BooleanFieldSpec and returns and BooleanField
 func NewBoolean(spec BooleanFieldSpec, valueValidation bool) *BooleanField {
 	return &BooleanField{
-		name:            spec.Name,
-		required:        spec.Required,
-		valueValidation: valueValidation,
-		value:           spec.Value,
+		Name:                 spec.Name,
+		FieldRequired:        spec.Required,
+		FieldValueValidation: valueValidation,
+		Value:                spec.Value,
 	}
 }
