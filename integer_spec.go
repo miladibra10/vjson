@@ -21,20 +21,20 @@ func NewInteger(spec IntegerFieldSpec, minValidation, maxValidation, signValidat
 	ranges := make([]intRange, 0, len(spec.Ranges))
 	for _, rangeSpec := range spec.Ranges {
 		ranges = append(ranges, intRange{
-			start: rangeSpec.Start,
-			end:   rangeSpec.End,
+			Start: rangeSpec.Start,
+			End:   rangeSpec.End,
 		})
 	}
 	return &IntegerField{
-		name:            spec.Name,
-		required:        spec.Required,
-		min:             spec.Min,
-		minValidation:   minValidation,
-		max:             spec.Max,
-		maxValidation:   maxValidation,
-		signValidation:  signValidation,
-		positive:        spec.Positive,
-		rangeValidation: rangeValidation,
-		ranges:          ranges,
+		Name:                 spec.Name,
+		FieldRequired:        spec.Required,
+		FieldMin:             spec.Min,
+		FieldMinValidation:   minValidation,
+		FieldMax:             spec.Max,
+		FieldMaxValidation:   maxValidation,
+		FieldSignValidation:  signValidation,
+		FieldPositive:        spec.Positive,
+		FieldRangeValidation: rangeValidation,
+		FieldRanges:          ranges,
 	}
 }

@@ -2,32 +2,33 @@ package vjson
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
-	"strings"
 )
 
 type intRange struct {
-	start int
-	end   int
+	Start int `json:"start"`
+	End   int `json:"end"`
 }
 
 // IntegerField is the type for validating integers in a JSON
 type IntegerField struct {
-	name     string
-	required bool
+	Name          string `json:"name"`
+	FieldRequired bool   `json:"required"`
 
-	min           int
-	minValidation bool
+	FieldMin           int  `json:"min"`
+	FieldMinValidation bool `json:"minValidation"`
 
-	max           int
-	maxValidation bool
+	FieldMax           int  `json:"max"`
+	FieldMaxValidation bool `json:"maxValidation"`
 
-	signValidation bool
-	positive       bool
+	FieldSignValidation bool `json:"signValidation"`
+	FieldPositive       bool `json:"positive"`
 
-	rangeValidation bool
-	ranges          []intRange
+	FieldRangeValidation bool       `json:"rangeValidation"`
+	FieldRanges          []intRange `json:"ranges"`
 }
 
 // To Force Implementing Field interface by IntegerField
@@ -35,16 +36,16 @@ var _ Field = (*IntegerField)(nil)
 
 // GetName returns name of the field
 func (i *IntegerField) GetName() string {
-	return i.name
+	return i.Name
 }
 
 // Validate is used for validating a value. it returns an error if the value is invalid.
 func (i *IntegerField) Validate(v interface{}) error {
 	if v == nil {
-		if !i.required {
+		if !i.FieldRequired {
 			return nil
 		}
-		return errors.Errorf("Value for %s field is required", i.name)
+		return errors.Errorf("Value for %s field is required", i.Name)
 	}
 	var value int
 	var intOK bool
@@ -55,7 +56,7 @@ func (i *IntegerField) Validate(v interface{}) error {
 	value, intOK = v.(int)
 
 	if !floatOK && !intOK {
-		return errors.Errorf("Value for %s should be a number", i.name)
+		return errors.Errorf("Value for %s should be a number", i.Name)
 	}
 
 	if floatOK {
@@ -63,32 +64,32 @@ func (i *IntegerField) Validate(v interface{}) error {
 	}
 
 	var result error
-	if i.signValidation && i.positive {
+	if i.FieldSignValidation && i.FieldPositive {
 		if value < 0 {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be a positive integer", i.name))
+			result = multierror.Append(result, errors.Errorf("Value for %s should be a positive integer", i.Name))
 		}
-	} else if i.signValidation && !i.positive {
+	} else if i.FieldSignValidation && !i.FieldPositive {
 		if value > 0 {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be a negative integer", i.name))
+			result = multierror.Append(result, errors.Errorf("Value for %s should be a negative integer", i.Name))
 		}
 	}
 
-	if i.minValidation {
-		if value < i.min {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be at least %d", i.name, i.min))
+	if i.FieldMinValidation {
+		if value < i.FieldMin {
+			result = multierror.Append(result, errors.Errorf("Value for %s should be at least %d", i.Name, i.FieldMin))
 		}
 	}
 
-	if i.maxValidation {
-		if value > i.max {
-			result = multierror.Append(result, errors.Errorf("Value for %s should be at most %d", i.name, i.max))
+	if i.FieldMaxValidation {
+		if value > i.FieldMax {
+			result = multierror.Append(result, errors.Errorf("Value for %s should be at most %d", i.Name, i.FieldMax))
 		}
 	}
 
-	if i.rangeValidation {
+	if i.FieldRangeValidation {
 		inRange := false
-		for _, r := range i.ranges {
-			if value >= r.start && value <= r.end {
+		for _, r := range i.FieldRanges {
+			if value >= r.Start && value <= r.End {
 				inRange = true
 				break
 			}
@@ -96,10 +97,10 @@ func (i *IntegerField) Validate(v interface{}) error {
 
 		if !inRange {
 			var ranges strings.Builder
-			for _, r := range i.ranges {
-				ranges.WriteString(fmt.Sprintf("[%d,%d] ", r.start, r.end))
+			for _, r := range i.FieldRanges {
+				ranges.WriteString(fmt.Sprintf("[%d,%d] ", r.Start, r.End))
 			}
-			result = multierror.Append(result, errors.Errorf("Value for %s should be in one of these ranges: %s", i.name, ranges.String()))
+			result = multierror.Append(result, errors.Errorf("Value for %s should be in one of these ranges: %s", i.Name, ranges.String()))
 		}
 	}
 
@@ -108,57 +109,57 @@ func (i *IntegerField) Validate(v interface{}) error {
 
 // Required is called to make a field required in a JSON
 func (i *IntegerField) Required() *IntegerField {
-	i.required = true
+	i.FieldRequired = true
 	return i
 }
 
 // Positive is called when we want to force the value to be positive in validation.
 func (i *IntegerField) Positive() *IntegerField {
-	i.signValidation = true
-	i.positive = true
+	i.FieldSignValidation = true
+	i.FieldPositive = true
 	return i
 }
 
 // Negative is called when we want to force the value to be negative in validation.
 func (i *IntegerField) Negative() *IntegerField {
-	i.signValidation = true
-	i.positive = false
+	i.FieldSignValidation = true
+	i.FieldPositive = false
 	return i
 }
 
 // Min is called when we want to set a minimum value for an integer value in validation.
 func (i *IntegerField) Min(value int) *IntegerField {
-	i.min = value
-	i.minValidation = true
+	i.FieldMin = value
+	i.FieldMinValidation = true
 	return i
 }
 
 // Max is called when we want to set a maximum value for an integer value in validation.
 func (i *IntegerField) Max(value int) *IntegerField {
-	i.max = value
-	i.maxValidation = true
+	i.FieldMax = value
+	i.FieldMaxValidation = true
 	return i
 }
 
 // Range is called when we want to define valid ranges for an integer value in validation.
 func (i *IntegerField) Range(start, end int) *IntegerField {
-	i.ranges = append(i.ranges, intRange{start: start, end: end})
-	i.rangeValidation = true
+	i.FieldRanges = append(i.FieldRanges, intRange{Start: start, End: end})
+	i.FieldRangeValidation = true
 	return i
 }
 
 // Integer is the constructor of an integer field
 func Integer(name string) *IntegerField {
 	return &IntegerField{
-		name:            name,
-		required:        false,
-		min:             0,
-		minValidation:   false,
-		max:             0,
-		maxValidation:   false,
-		signValidation:  false,
-		positive:        false,
-		rangeValidation: false,
-		ranges:          []intRange{},
+		Name:                 name,
+		FieldRequired:        false,
+		FieldMin:             0,
+		FieldMinValidation:   false,
+		FieldMax:             0,
+		FieldMaxValidation:   false,
+		FieldSignValidation:  false,
+		FieldPositive:        false,
+		FieldRangeValidation: false,
+		FieldRanges:          []intRange{},
 	}
 }

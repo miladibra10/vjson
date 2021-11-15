@@ -1,8 +1,9 @@
 package vjson
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSchema_Validate(t *testing.T) {
@@ -126,10 +127,10 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/string.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Equal(t, true, schema.Fields[0].(*StringField).validateFormat)
-			assert.Equal(t, true, schema.Fields[0].(*StringField).validateMaxLength)
-			assert.Equal(t, true, schema.Fields[0].(*StringField).validateMinLength)
-			assert.Equal(t, false, schema.Fields[0].(*StringField).validateChoices)
+			assert.Equal(t, true, schema.Fields[0].(*StringField).FieldValidateFormat)
+			assert.Equal(t, true, schema.Fields[0].(*StringField).FieldValidateMaxLength)
+			assert.Equal(t, true, schema.Fields[0].(*StringField).FieldValidateMinLength)
+			assert.Equal(t, false, schema.Fields[0].(*StringField).FieldValidateChoices)
 		})
 
 		t.Run("invalid", func(t *testing.T) {
@@ -143,14 +144,14 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/integer.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Equal(t, true, schema.Fields[0].(*IntegerField).required)
-			assert.Equal(t, true, schema.Fields[0].(*IntegerField).minValidation)
-			assert.Equal(t, 2, schema.Fields[0].(*IntegerField).min)
-			assert.Equal(t, true, schema.Fields[0].(*IntegerField).maxValidation)
-			assert.Equal(t, 100, schema.Fields[0].(*IntegerField).max)
-			assert.Equal(t, true, schema.Fields[0].(*IntegerField).signValidation)
-			assert.Equal(t, true, schema.Fields[0].(*IntegerField).positive)
-			assert.Len(t, schema.Fields[0].(*IntegerField).ranges, 1)
+			assert.Equal(t, true, schema.Fields[0].(*IntegerField).FieldRequired)
+			assert.Equal(t, true, schema.Fields[0].(*IntegerField).FieldMinValidation)
+			assert.Equal(t, 2, schema.Fields[0].(*IntegerField).FieldMin)
+			assert.Equal(t, true, schema.Fields[0].(*IntegerField).FieldMaxValidation)
+			assert.Equal(t, 100, schema.Fields[0].(*IntegerField).FieldMax)
+			assert.Equal(t, true, schema.Fields[0].(*IntegerField).FieldSignValidation)
+			assert.Equal(t, true, schema.Fields[0].(*IntegerField).FieldPositive)
+			assert.Len(t, schema.Fields[0].(*IntegerField).FieldRanges, 1)
 
 		})
 
@@ -165,14 +166,14 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/float.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Equal(t, true, schema.Fields[0].(*FloatField).required)
-			assert.Equal(t, true, schema.Fields[0].(*FloatField).minValidation)
-			assert.Equal(t, 2.0, schema.Fields[0].(*FloatField).min)
-			assert.Equal(t, true, schema.Fields[0].(*FloatField).maxValidation)
-			assert.Equal(t, 100.0, schema.Fields[0].(*FloatField).max)
-			assert.Equal(t, true, schema.Fields[0].(*FloatField).signValidation)
-			assert.Equal(t, true, schema.Fields[0].(*FloatField).positive)
-			assert.Len(t, schema.Fields[0].(*FloatField).ranges, 1)
+			assert.Equal(t, true, schema.Fields[0].(*FloatField).FieldRequired)
+			assert.Equal(t, true, schema.Fields[0].(*FloatField).FieldMinValidation)
+			assert.Equal(t, 2.0, schema.Fields[0].(*FloatField).FieldMin)
+			assert.Equal(t, true, schema.Fields[0].(*FloatField).FieldMaxValidation)
+			assert.Equal(t, 100.0, schema.Fields[0].(*FloatField).FieldMax)
+			assert.Equal(t, true, schema.Fields[0].(*FloatField).FieldSignValidation)
+			assert.Equal(t, true, schema.Fields[0].(*FloatField).FieldPositive)
+			assert.Len(t, schema.Fields[0].(*FloatField).FieldRanges, 1)
 
 		})
 
@@ -187,12 +188,12 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/array.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Equal(t, false, schema.Fields[0].(*ArrayField).required)
-			assert.Equal(t, 2, schema.Fields[0].(*ArrayField).minLength)
-			assert.Equal(t, true, schema.Fields[0].(*ArrayField).minLengthValidation)
-			assert.Equal(t, 10, schema.Fields[0].(*ArrayField).maxLength)
-			assert.Equal(t, true, schema.Fields[0].(*ArrayField).maxLengthValidation)
-			assert.Equal(t, "age", schema.Fields[0].(*ArrayField).items.GetName())
+			assert.Equal(t, false, schema.Fields[0].(*ArrayField).FieldRequred)
+			assert.Equal(t, 2, schema.Fields[0].(*ArrayField).FieldMinLength)
+			assert.Equal(t, true, schema.Fields[0].(*ArrayField).FieldMinLengthValidation)
+			assert.Equal(t, 10, schema.Fields[0].(*ArrayField).FieldMaxLength)
+			assert.Equal(t, true, schema.Fields[0].(*ArrayField).FieldMaxLengthValidation)
+			assert.Equal(t, "age", schema.Fields[0].(*ArrayField).Items.GetName())
 
 		})
 
@@ -207,7 +208,7 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/object.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Len(t, schema.Fields[0].(*ObjectField).schema.Fields, 1)
+			assert.Len(t, schema.Fields[0].(*ObjectField).FieldSchema.Fields, 1)
 		})
 
 		t.Run("invalid", func(t *testing.T) {
@@ -221,9 +222,9 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/boolean.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Equal(t, false, schema.Fields[0].(*BooleanField).required)
-			assert.Equal(t, true, schema.Fields[0].(*BooleanField).valueValidation)
-			assert.Equal(t, true, schema.Fields[0].(*BooleanField).value)
+			assert.Equal(t, false, schema.Fields[0].(*BooleanField).FieldRequired)
+			assert.Equal(t, true, schema.Fields[0].(*BooleanField).FieldValueValidation)
+			assert.Equal(t, true, schema.Fields[0].(*BooleanField).Value)
 		})
 
 		t.Run("invalid", func(t *testing.T) {
@@ -237,7 +238,7 @@ func TestReadFromFile(t *testing.T) {
 			schema, err := ReadFromFile("test/null.json")
 			assert.Nil(t, err)
 			assert.Len(t, schema.Fields, 1)
-			assert.Equal(t, "foo", schema.Fields[0].(*NullField).name)
+			assert.Equal(t, "foo", schema.Fields[0].(*NullField).Name)
 		})
 
 		t.Run("invalid", func(t *testing.T) {

@@ -1,8 +1,9 @@
 package vjson
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIntegerField_GetName(t *testing.T) {
@@ -133,9 +134,9 @@ func TestNewInteger(t *testing.T) {
 	}, false, false, false, true)
 
 	assert.NotNil(t, field)
-	assert.Equal(t, "bar", field.name)
-	assert.Equal(t, false, field.minValidation)
-	assert.Equal(t, false, field.maxValidation)
-	assert.Equal(t, false, field.signValidation)
-	assert.Equal(t, true, field.rangeValidation)
+	assert.Equal(t, "bar", field.Name)
+	assert.Equal(t, false, field.FieldMinValidation)
+	assert.Equal(t, false, field.FieldMaxValidation)
+	assert.Equal(t, false, field.FieldSignValidation)
+	assert.Equal(t, true, field.FieldRangeValidation)
 }

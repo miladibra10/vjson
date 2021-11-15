@@ -12,12 +12,12 @@ type ArrayFieldSpec struct {
 // NewArray receives an ArrayFieldSpec and returns and ArrayField
 func NewArray(spec ArrayFieldSpec, itemField Field, minLengthValidation, maxLengthValidation bool) *ArrayField {
 	return &ArrayField{
-		name:                spec.Name,
-		required:            spec.Required,
-		items:               itemField,
-		minLength:           spec.MinLength,
-		minLengthValidation: minLengthValidation,
-		maxLength:           spec.MaxLength,
-		maxLengthValidation: maxLengthValidation,
+		Name:                     spec.Name,
+		FieldRequred:             spec.Required,
+		Items:                    itemField,
+		FieldMinLength:           spec.MinLength,
+		FieldMinLengthValidation: minLengthValidation,
+		FieldMaxLength:           spec.MaxLength,
+		FieldMaxLengthValidation: maxLengthValidation,
 	}
 }

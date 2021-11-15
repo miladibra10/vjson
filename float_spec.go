@@ -21,20 +21,20 @@ func NewFloat(spec FloatFieldSpec, minValidation, maxValidation, signValidation,
 	ranges := make([]floatRange, 0, len(spec.Ranges))
 	for _, rangeSpec := range spec.Ranges {
 		ranges = append(ranges, floatRange{
-			start: rangeSpec.Start,
-			end:   rangeSpec.End,
+			Start: rangeSpec.Start,
+			End:   rangeSpec.End,
 		})
 	}
 	return &FloatField{
-		name:            spec.Name,
-		required:        spec.Required,
-		min:             spec.Min,
-		minValidation:   minValidation,
-		max:             spec.Max,
-		maxValidation:   maxValidation,
-		signValidation:  signValidation,
-		positive:        spec.Positive,
-		rangeValidation: rangeValidation,
-		ranges:          ranges,
+		Name:                 spec.Name,
+		FieldRequired:        spec.Required,
+		FieldMin:             spec.Min,
+		FieldMinValidation:   minValidation,
+		FieldMax:             spec.Max,
+		FieldMaxValidation:   maxValidation,
+		FieldSignValidation:  signValidation,
+		FieldPositive:        spec.Positive,
+		FieldRangeValidation: rangeValidation,
+		FieldRanges:          ranges,
 	}
 }
