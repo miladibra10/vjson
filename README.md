@@ -135,6 +135,8 @@ func main() {
 
 `schema` object contains a string field, named `name`. This code validates `jsonString`.
 
+> **Note**: You could Marshal your schema as a json object for backup usages with `json.Marshal` function.
+
 # Fields
 
 ## Integer
