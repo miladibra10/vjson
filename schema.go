@@ -12,7 +12,7 @@ import (
 
 // Schema is the type for declaring a JSON schema and validating a json object.
 type Schema struct {
-	Fields []Field
+	Fields []Field `json:"fields"`
 }
 
 // SchemaSpec is used for parsing a Schema

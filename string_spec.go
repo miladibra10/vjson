@@ -2,12 +2,13 @@ package vjson
 
 // StringFieldSpec is a type used for parsing an StringField
 type StringFieldSpec struct {
-	Name      string   `mapstructure:"name"`
-	Required  bool     `mapstructure:"required"`
-	MinLength int      `mapstructure:"min_length"`
-	MaxLength int      `mapstructure:"max_length"`
-	Format    string   `mapstructure:"format"`
-	Choices   []string `mapstructure:"choices"`
+	Name      string    `mapstructure:"name" json:"name"`
+	Type      fieldType `json:"type"`
+	Required  bool      `mapstructure:"required" json:"required,omitempty"`
+	MinLength int       `mapstructure:"min_length" json:"minLength,omitempty"`
+	MaxLength int       `mapstructure:"max_length" json:"maxLength,omitempty"`
+	Format    string    `mapstructure:"format" json:"format,omitempty"`
+	Choices   []string  `mapstructure:"choices" json:"choices,omitempty"`
 }
 
 // NewString receives an StringFieldSpec and returns and StringField

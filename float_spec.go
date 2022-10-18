@@ -2,18 +2,19 @@ package vjson
 
 // FloatRangeSpec is a type for parsing a float field range
 type FloatRangeSpec struct {
-	Start float64 `mapstructure:"start"`
-	End   float64 `mapstructure:"end"`
+	Start float64 `mapstructure:"start" json:"start"`
+	End   float64 `mapstructure:"end" json:"end"`
 }
 
 // FloatFieldSpec is a type used for parsing an FloatField
 type FloatFieldSpec struct {
-	Name     string           `mapstructure:"name"`
-	Required bool             `mapstructure:"required"`
-	Min      float64          `mapstructure:"min"`
-	Max      float64          `mapstructure:"max"`
-	Positive bool             `mapstructure:"positive"`
-	Ranges   []FloatRangeSpec `mapstructure:"ranges"`
+	Name     string           `mapstructure:"name" json:"name"`
+	Type     fieldType        `json:"type"`
+	Required bool             `mapstructure:"required" json:"required,omitempty"`
+	Min      float64          `mapstructure:"min" json:"min,omitempty"`
+	Max      float64          `mapstructure:"max" json:"max,omitempty"`
+	Positive bool             `mapstructure:"positive" json:"positive,omitempty"`
+	Ranges   []FloatRangeSpec `mapstructure:"ranges" json:"ranges,omitempty"`
 }
 
 // NewFloat receives an FloatFieldSpec and returns and FloatField

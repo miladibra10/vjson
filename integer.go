@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -145,6 +146,25 @@ func (i *IntegerField) Range(start, end int) *IntegerField {
 	i.ranges = append(i.ranges, intRange{start: start, end: end})
 	i.rangeValidation = true
 	return i
+}
+
+func (i *IntegerField) MarshalJSON() ([]byte, error) {
+	ranges := make([]IntRangeSpec, 0, len(i.ranges))
+	for _, r := range i.ranges {
+		ranges = append(ranges, IntRangeSpec{
+			Start: r.start,
+			End:   r.end,
+		})
+	}
+	return json.Marshal(IntegerFieldSpec{
+		Name:     i.name,
+		Required: i.required,
+		Min:      i.min,
+		Max:      i.max,
+		Positive: i.positive,
+		Ranges:   ranges,
+		Type:     integerType,
+	})
 }
 
 // Integer is the constructor of an integer field

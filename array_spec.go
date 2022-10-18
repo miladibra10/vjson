@@ -2,11 +2,12 @@ package vjson
 
 // ArrayFieldSpec is a type used for parsing an ArrayField
 type ArrayFieldSpec struct {
-	Name      string                 `mapstructure:"name"`
-	Required  bool                   `mapstructure:"required"`
-	Items     map[string]interface{} `mapstructure:"items"`
-	MinLength int                    `mapstructure:"min_length"`
-	MaxLength int                    `mapstructure:"max_length"`
+	Name      string                 `mapstructure:"name" json:"name"`
+	Type      fieldType              `json:"type"`
+	Required  bool                   `mapstructure:"required" json:"required,omitempty"`
+	Items     map[string]interface{} `mapstructure:"items" json:"items,omitempty"`
+	MinLength int                    `mapstructure:"min_length" json:"minLength,omitempty"`
+	MaxLength int                    `mapstructure:"max_length" json:"maxLength,omitempty"`
 }
 
 // NewArray receives an ArrayFieldSpec and returns and ArrayField

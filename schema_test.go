@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -269,9 +270,9 @@ func TestReadFromFile(t *testing.T) {
 }
 
 func TestReadFromString(t *testing.T) {
-	schema, err := ReadFromString("{}")
+	schema, err := ReadFromString(`{"fields":[{"name":"bar","type": "string","required":true}]}`)
 	assert.Nil(t, err)
-	assert.Len(t, schema.Fields, 0)
+	assert.Len(t, schema.Fields, 1)
 }
 
 func TestNewSchema(t *testing.T) {
@@ -280,6 +281,23 @@ func TestNewSchema(t *testing.T) {
 		String("bar"),
 	)
 	assert.Len(t, s.Fields, 2)
+}
+
+func TestSchema_MarshalJSON(t *testing.T) {
+	schema := NewSchema(
+		Integer("foo"),
+		String("bar").Required(),
+	)
+	schemaBytes, _ := json.Marshal(schema)
+
+	var newSchema Schema
+
+	err := json.Unmarshal(schemaBytes, &newSchema)
+	assert.Nil(t, err)
+
+	assert.Equal(t, schema.Fields[0], newSchema.Fields[0])
+	assert.Equal(t, len(schema.Fields), len(newSchema.Fields))
+
 }
 
 func TestSchema_UnmarshalJSON(t *testing.T) {

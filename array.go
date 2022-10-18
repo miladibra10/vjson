@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 )
@@ -80,6 +81,27 @@ func (a *ArrayField) MaxLength(length int) *ArrayField {
 	a.maxLength = length
 	a.maxLengthValidation = true
 	return a
+}
+
+func (a *ArrayField) MarshalJSON() ([]byte, error) {
+	itemsRaw, err := json.Marshal(a.items)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not marshal items field of array field: %s", a.name)
+	}
+
+	items := make(map[string]interface{})
+	err = json.Unmarshal(itemsRaw, &items)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not unmarshal items field of array field: %s", a.name)
+	}
+	return json.Marshal(ArrayFieldSpec{
+		Name:      a.name,
+		Type:      arrayType,
+		Required:  a.required,
+		Items:     items,
+		MinLength: a.minLength,
+		MaxLength: a.maxLength,
+	})
 }
 
 // Array is the constructor of an array field.

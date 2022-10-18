@@ -2,18 +2,19 @@ package vjson
 
 // IntRangeSpec is a type for parsing an integer field range
 type IntRangeSpec struct {
-	Start int `mapstructure:"start"`
-	End   int `mapstructure:"end"`
+	Start int `mapstructure:"start" json:"start"`
+	End   int `mapstructure:"end" json:"end"`
 }
 
 // IntegerFieldSpec is a type used for parsing an IntegerField
 type IntegerFieldSpec struct {
-	Name     string         `mapstructure:"name"`
-	Required bool           `mapstructure:"required"`
-	Min      int            `mapstructure:"min"`
-	Max      int            `mapstructure:"max"`
-	Positive bool           `mapstructure:"positive"`
-	Ranges   []IntRangeSpec `mapstructure:"ranges"`
+	Name     string         `mapstructure:"name" json:"name"`
+	Type     fieldType      `json:"type"`
+	Required bool           `mapstructure:"required" json:"required,omitempty"`
+	Min      int            `mapstructure:"min" json:"min,omitempty"`
+	Max      int            `mapstructure:"max" json:"max,omitempty"`
+	Positive bool           `mapstructure:"positive" json:"positive,omitempty"`
+	Ranges   []IntRangeSpec `mapstructure:"ranges" json:"ranges,omitempty"`
 }
 
 // NewInteger receives an IntegerFieldSpec and returns and IntegerField

@@ -1,6 +1,9 @@
 package vjson
 
-import "github.com/pkg/errors"
+import (
+	"encoding/json"
+	"github.com/pkg/errors"
+)
 
 // NullField is the type for validating floats in a JSON
 type NullField struct {
@@ -21,6 +24,13 @@ func (n *NullField) Validate(input interface{}) error {
 		return nil
 	}
 	return errors.Errorf("Value for %s should be null", n.name)
+}
+
+func (n *NullField) MarshalJSON() ([]byte, error) {
+	return json.Marshal(NullFieldSpec{
+		Name: n.name,
+		Type: nullType,
+	})
 }
 
 // Null is the constructor of a null field in a JSON.

@@ -1,6 +1,9 @@
 package vjson
 
-import "github.com/pkg/errors"
+import (
+	"encoding/json"
+	"github.com/pkg/errors"
+)
 
 // BooleanField is the type for validating booleans in a JSON
 type BooleanField struct {
@@ -53,6 +56,15 @@ func (b *BooleanField) ShouldBe(value bool) *BooleanField {
 	b.value = value
 	b.valueValidation = true
 	return b
+}
+
+func (b *BooleanField) MarshalJSON() ([]byte, error) {
+	return json.Marshal(BooleanFieldSpec{
+		Name:     b.name,
+		Type:     booleanType,
+		Required: b.required,
+		Value:    b.value,
+	})
 }
 
 // Boolean is the constructor of a boolean field
