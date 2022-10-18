@@ -8,12 +8,13 @@ type FloatRangeSpec struct {
 
 // FloatFieldSpec is a type used for parsing an FloatField
 type FloatFieldSpec struct {
-	Name     string           `mapstructure:"name"`
-	Required bool             `mapstructure:"required"`
-	Min      float64          `mapstructure:"min"`
-	Max      float64          `mapstructure:"max"`
-	Positive bool             `mapstructure:"positive"`
-	Ranges   []FloatRangeSpec `mapstructure:"ranges"`
+	Name     string           `mapstructure:"name" json:"name"`
+	Type     fieldType        `json:"type"`
+	Required bool             `mapstructure:"required" json:"required,omitempty"`
+	Min      float64          `mapstructure:"min" json:"min,omitempty"`
+	Max      float64          `mapstructure:"max" json:"max,omitempty"`
+	Positive bool             `mapstructure:"positive" json:"positive,omitempty"`
+	Ranges   []FloatRangeSpec `mapstructure:"ranges" json:"ranges,omitempty"`
 }
 
 // NewFloat receives an FloatFieldSpec and returns and FloatField

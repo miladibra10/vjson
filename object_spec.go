@@ -2,9 +2,10 @@ package vjson
 
 // ObjectFieldSpec is a type used for parsing an ObjectField
 type ObjectFieldSpec struct {
-	Name     string                 `mapstructure:"name"`
-	Required bool                   `mapstructure:"required"`
-	Schema   map[string]interface{} `mapstructure:"schema"`
+	Name     string                 `mapstructure:"name" json:"name"`
+	Type     fieldType              `json:"type"`
+	Required bool                   `mapstructure:"required" json:"required,omitempty"`
+	Schema   map[string]interface{} `mapstructure:"schema" json:"schema,omitempty"`
 }
 
 // NewObject receives an ObjectFieldSpec and returns and ObjectField

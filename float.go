@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
@@ -136,6 +137,25 @@ func (f *FloatField) Range(start, end float64) *FloatField {
 	f.ranges = append(f.ranges, floatRange{start: start, end: end})
 	f.rangeValidation = true
 	return f
+}
+
+func (f *FloatField) MarshalJSON() ([]byte, error) {
+	ranges := make([]FloatRangeSpec, 0, len(f.ranges))
+	for _, r := range f.ranges {
+		ranges = append(ranges, FloatRangeSpec{
+			Start: r.start,
+			End:   r.end,
+		})
+	}
+	return json.Marshal(FloatFieldSpec{
+		Name:     f.name,
+		Type:     floatType,
+		Required: f.required,
+		Min:      f.min,
+		Max:      f.max,
+		Positive: f.positive,
+		Ranges:   ranges,
+	})
 }
 
 // Float is the constructor of a float field

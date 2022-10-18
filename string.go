@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/hashicorp/go-multierror"
 	"github.com/pkg/errors"
 	"regexp"
@@ -66,7 +67,7 @@ func (s *StringField) Format(format string) *StringField {
 	return s
 }
 
-// Choices is called to set valid choices of a string field in validation
+// Choices function is called to set valid choices of a string field in validation
 func (s *StringField) Choices(choices ...string) *StringField {
 	s.choices = choices
 	s.validateChoices = true
@@ -126,6 +127,18 @@ func (s *StringField) Validate(value interface{}) error {
 	}
 
 	return result
+}
+
+func (s *StringField) MarshalJSON() ([]byte, error) {
+	return json.Marshal(StringFieldSpec{
+		Name:      s.name,
+		Required:  s.required,
+		MinLength: s.minLength,
+		MaxLength: s.maxLength,
+		Format:    s.format,
+		Choices:   s.choices,
+		Type:      stringType,
+	})
 }
 
 // String is the constructor of a string field
