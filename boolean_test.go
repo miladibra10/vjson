@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -53,6 +54,20 @@ func TestBooleanField_Validate(t *testing.T) {
 		err = field.Validate(false)
 		assert.NotNil(t, err)
 	})
+}
+
+func TestBooleanField_MarshalJSON(t *testing.T) {
+	field := Boolean("foo")
+
+	b, err := json.Marshal(field)
+	assert.Nil(t, err)
+
+	data := map[string]string{}
+	err = json.Unmarshal(b, &data)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "foo", data["name"])
+	assert.Equal(t, string(booleanType), data["type"])
 }
 
 func TestNewBoolean(t *testing.T) {

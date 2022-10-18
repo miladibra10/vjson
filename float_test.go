@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -92,6 +93,21 @@ func TestFloatField_Validate(t *testing.T) {
 		err = field.Validate(float64(100))
 		assert.NotNil(t, err)
 	})
+}
+
+func TestFloatField_MarshalJSON(t *testing.T) {
+	field := Float("foo").Range(10, 20)
+	b, err := json.Marshal(field)
+	assert.Nil(t, err)
+
+	data := map[string]interface{}{}
+	err = json.Unmarshal(b, &data)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "foo", data["name"])
+	assert.Equal(t, string(floatType), data["type"])
+	assert.Equal(t, float64(10), data["ranges"].([]interface{})[0].(map[string]interface{})["start"])
+	assert.Equal(t, float64(20), data["ranges"].([]interface{})[0].(map[string]interface{})["end"])
 }
 
 func TestNewFloat(t *testing.T) {

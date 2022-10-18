@@ -2,8 +2,8 @@ package vjson
 
 // IntRangeSpec is a type for parsing an integer field range
 type IntRangeSpec struct {
-	Start int `mapstructure:"start"`
-	End   int `mapstructure:"end"`
+	Start int `mapstructure:"start" json:"start"`
+	End   int `mapstructure:"end" json:"end"`
 }
 
 // IntegerFieldSpec is a type used for parsing an IntegerField

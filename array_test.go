@@ -1,6 +1,7 @@
 package vjson
 
 import (
+	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -94,6 +95,21 @@ func TestArrayField_Validate(t *testing.T) {
 		err = field.Validate([]interface{}{1, 2})
 		assert.Nil(t, err)
 	})
+}
+
+func TestArrayField_MarshalJSON(t *testing.T) {
+	field := Array("foo", String("bar"))
+
+	b, err := json.Marshal(field)
+	assert.Nil(t, err)
+
+	data := map[string]interface{}{}
+	err = json.Unmarshal(b, &data)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "foo", data["name"])
+	assert.Equal(t, string(arrayType), data["type"])
+	assert.Equal(t, "bar", data["items"].(map[string]interface{})["name"])
 }
 
 func TestNewArray(t *testing.T) {

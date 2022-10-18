@@ -163,6 +163,7 @@ func (i *IntegerField) MarshalJSON() ([]byte, error) {
 		Max:      i.max,
 		Positive: i.positive,
 		Ranges:   ranges,
+		Type:     integerType,
 	})
 }
 

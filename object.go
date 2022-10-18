@@ -53,21 +53,22 @@ func (o *ObjectField) Required() *ObjectField {
 }
 
 func (o *ObjectField) MarshalJSON() ([]byte, error) {
-	itemsRaw, err := json.Marshal(o.schema)
+	schemaRaw, err := json.Marshal(o.schema)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not marshal schema field of object field: %s", o.name)
 	}
 
-	items := make(map[string]interface{})
-	err = json.Unmarshal(itemsRaw, &items)
+	schema := make(map[string]interface{})
+	err = json.Unmarshal(schemaRaw, &schema)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not unmarshal schema field of array field: %s", o.name)
 	}
+
 	return json.Marshal(ObjectFieldSpec{
 		Name:     o.name,
 		Type:     objectType,
 		Required: o.required,
-		Schema:   nil,
+		Schema:   schema,
 	})
 }
 

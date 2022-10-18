@@ -2,8 +2,8 @@ package vjson
 
 // FloatRangeSpec is a type for parsing a float field range
 type FloatRangeSpec struct {
-	Start float64 `mapstructure:"start"`
-	End   float64 `mapstructure:"end"`
+	Start float64 `mapstructure:"start" json:"start"`
+	End   float64 `mapstructure:"end" json:"end"`
 }
 
 // FloatFieldSpec is a type used for parsing an FloatField
