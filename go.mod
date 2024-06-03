@@ -1,4 +1,4 @@
-module github.com/miladibra10/vjson
+module github.com/thanharrow/vjson
 
 go 1.17
 

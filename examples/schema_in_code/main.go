@@ -1,6 +1,6 @@
 package main
 
-import "github.com/miladibra10/vjson"
+import "github.com/thanharrow/vjson"
 
 func main() {
 	schema := vjson.NewSchema(

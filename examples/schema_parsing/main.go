@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/miladibra10/vjson"
+	"fmt"
+
+	"github.com/thanharrow/vjson"
 )
 
 func main() {
@@ -10,15 +12,8 @@ func main() {
 		"fields": [
 			{
 				"name": "name",
-				"type": "array",
-				"required": true,
-				"fix_items": [{
-					"name": "11",
-					"type": "string"
-				}, {
-					"name": "12",
-					"type": "integer"
-				}]
+				"type": "string",
+				"required": true
 			}
 		]
 	}
@@ -28,14 +23,18 @@ func main() {
 		panic(err)
 	}
 
+	schema.SetStrict(false) // default false
+
+	// field age is not validate, so validate is false
 	jsonString := `
 	{
-		"name": ["hello", 123]
+		"name": "James",
+    "age": 10
 	}
 	`
 
 	err = schema.ValidateString(jsonString)
 	if err != nil {
-		panic(err)
+		fmt.Printf("schema is not valid: " + err.Error())
 	}
 }
