@@ -2,6 +2,7 @@ package vjson
 
 import (
 	"encoding/json"
+
 	"github.com/pkg/errors"
 )
 
@@ -49,6 +50,11 @@ func (o *ObjectField) Validate(v interface{}) error {
 // Required is called to make a field required in a JSON
 func (o *ObjectField) Required() *ObjectField {
 	o.required = true
+	return o
+}
+
+func (o *ObjectField) Strict() *ObjectField {
+	o.schema.StrictMode = true
 	return o
 }
 

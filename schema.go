@@ -2,22 +2,25 @@ package vjson
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"os"
+
 	"github.com/hashicorp/go-multierror"
 	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 	"github.com/tidwall/gjson"
-	"io/ioutil"
-	"os"
 )
 
 // Schema is the type for declaring a JSON schema and validating a json object.
 type Schema struct {
-	Fields []Field `json:"fields"`
+	Fields     []Field `json:"fields"`
+	StrictMode bool    `json:"strict"`
 }
 
 // SchemaSpec is used for parsing a Schema
 type SchemaSpec struct {
-	Fields []map[string]interface{} `json:"fields"`
+	Fields     []map[string]interface{} `json:"fields"`
+	StrictMode bool                     `json:"strict"`
 }
 
 // UnmarshalJSON is implemented for parsing a Schema. it overrides json.Unmarshal behaviour.
@@ -28,6 +31,7 @@ func (s *Schema) UnmarshalJSON(bytes []byte) error {
 		return errors.Wrap(err, "could not unmarshal to SchemaSpec")
 	}
 	s.Fields = make([]Field, 0, len(schemaSpec.Fields))
+	s.StrictMode = schemaSpec.StrictMode
 
 	var result error
 
@@ -186,23 +190,40 @@ func (s *Schema) getArrayField(fieldSpec map[string]interface{}) (*ArrayField, e
 		return nil, errors.Errorf("name field is required for an array field")
 	}
 
+	var itemField Field
+	var fixItemFields []Field
+
 	itemsFieldSpecRaw, found := fieldSpec["items"]
-	if !found {
+	fixItemsFieldSpecRaw, foundFixItem := fieldSpec["fix_items"]
+	if !found && !foundFixItem {
 		return nil, errors.Errorf("items key is missing for array field name: %s", arraySpec.Name)
 	}
-	itemsFieldSpec, ok := itemsFieldSpecRaw.(map[string]interface{})
-	if !ok {
-		return nil, errors.Errorf("invalid format for items key for array field name: %s", arraySpec.Name)
+	if found && foundFixItem {
+		return nil, errors.Errorf("could not both using items key and fix items for array field name: %s", arraySpec.Name)
 	}
-	itemField, err := s.getField(itemsFieldSpec)
-	if err != nil {
-		return nil, errors.Wrapf(err, "could not get item field of array field name: %s", arraySpec.Name)
+
+	if itemsFieldSpec, ok := itemsFieldSpecRaw.(map[string]interface{}); ok {
+		itemField, err = s.getField(itemsFieldSpec)
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not get item field of array field name: %s", arraySpec.Name)
+		}
+	} else if fixItemsFieldSpec, ok := fixItemsFieldSpecRaw.([]interface{}); ok {
+		fixItemFields = []Field{}
+		for _, fixFieldSpec := range fixItemsFieldSpec {
+			fixItemField, err := s.getField(fixFieldSpec.(map[string]interface{}))
+			if err != nil {
+				return nil, errors.Wrapf(err, "could not get item field of array field name: %s", arraySpec.Name)
+			}
+			fixItemFields = append(fixItemFields, fixItemField)
+		}
+	} else {
+		return nil, errors.Errorf("invalid format for items key for array field name: %s", arraySpec.Name)
 	}
 
 	_, minLenValidation := fieldSpec["min_length"]
 	_, maxLenValidation := fieldSpec["max_length"]
 
-	arrayField := NewArray(arraySpec, itemField, minLenValidation, maxLenValidation)
+	arrayField := NewArray(arraySpec, itemField, fixItemFields, minLenValidation, maxLenValidation)
 	return arrayField, nil
 }
 
@@ -293,6 +314,26 @@ func (s *Schema) ValidateString(input string) error {
 
 func (s *Schema) validateJSON(json gjson.Result) error {
 	var result error
+	if json.IsObject() {
+		if s.StrictMode {
+			jsonMap := json.Map()
+			for jsonField := range jsonMap {
+				fieldFound := false
+				for _, field := range s.Fields {
+					if jsonField == field.GetName() {
+						fieldFound = true
+					}
+				}
+				if !fieldFound {
+					result = multierror.Append(result, errors.Errorf("Field %s is not validata", jsonField))
+				}
+			}
+			if result != nil {
+				return result
+			}
+		}
+	}
+
 	for _, field := range s.Fields {
 		fieldName := field.GetName()
 		fieldValue := json.Get(fieldName).Value()

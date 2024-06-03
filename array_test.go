@@ -2,8 +2,9 @@ package vjson
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestArrayField_GetName(t *testing.T) {
@@ -116,10 +117,32 @@ func TestNewArray(t *testing.T) {
 	field := NewArray(ArrayFieldSpec{
 		Name:     "bar",
 		Required: true,
-	}, String("foo"), false, false)
+	}, String("foo"), nil, false, false)
 
 	assert.NotNil(t, field)
 	assert.Equal(t, "bar", field.name)
 	assert.Equal(t, false, field.minLengthValidation)
 	assert.Equal(t, false, field.maxLengthValidation)
+}
+
+// ---- for fixItems Array ---
+func TestFixPositionArrayField_MarshalJSON(t *testing.T) {
+	field := FixArray("foo", []Field{
+		Integer("bar"),
+		String("baz"),
+	})
+
+	b, err := json.Marshal(field)
+	assert.Nil(t, err)
+
+	data := map[string]interface{}{}
+	err = json.Unmarshal(b, &data)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "foo", data["name"])
+	assert.Equal(t, string(arrayType), data["type"])
+
+	fixItems := data["fix_items"].([]interface{})
+	assert.Equal(t, "bar", fixItems[0].(map[string]interface{})["name"])
+	assert.Equal(t, "baz", fixItems[1].(map[string]interface{})["name"])
 }

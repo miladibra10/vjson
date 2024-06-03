@@ -2,8 +2,9 @@ package vjson
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestObjectField_GetName(t *testing.T) {
@@ -59,6 +60,56 @@ func TestObjectField_Validate(t *testing.T) {
 
 			err := field.Validate(obj)
 			assert.Nil(t, err)
+		})
+	})
+
+	t.Run("strict_field", func(t *testing.T) {
+		t.Run("strict_off", func(t *testing.T) {
+			field := Object("foo", objSchema).Required()
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.Nil(t, err)
+		})
+
+		t.Run("strict_on", func(t *testing.T) {
+			field := Object("foo", objSchema).Required().Strict()
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.NotNil(t, err)
+		})
+
+		t.Run("strict_off_and_not_required", func(t *testing.T) {
+			field := Object("foo", objSchema)
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.Nil(t, err)
+		})
+
+		t.Run("strict_on_and_not_required", func(t *testing.T) {
+			field := Object("foo", objSchema).Strict()
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.NotNil(t, err)
+		})
+
+		t.Run("strict_on_and_not_required_for_nil", func(t *testing.T) {
+			field := Object("foo", objSchema).Strict()
+
+			err := field.Validate(nil)
+			assert.Nil(t, err)
+		})
+
+		t.Run("strict_on_struct", func(t *testing.T) {
+			objSchemaStrict := Schema{
+				Fields: []Field{
+					Integer("age").Min(0).Max(90).Required(),
+				},
+			}
+			objSchemaStrict.StrictMode = true
+			field := Object("foo", objSchemaStrict)
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.NotNil(t, err)
 		})
 	})
 }
