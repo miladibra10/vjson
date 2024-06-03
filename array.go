@@ -56,6 +56,10 @@ func (a *ArrayField) Validate(v interface{}) error {
 		}
 	}
 
+	if a.items != nil && a.fixItems != nil {
+		result = multierror.Append(result, errors.Errorf("could not using both items key and fix items for array %s", a.name))
+	}
+
 	if a.items != nil {
 		for _, value := range values {
 			err := a.items.Validate(value)
@@ -63,7 +67,8 @@ func (a *ArrayField) Validate(v interface{}) error {
 				result = multierror.Append(result, errors.Wrapf(err, "%v item is invalid in %s array", value, a.name))
 			}
 		}
-	} else if a.fixItems != nil {
+	}
+	if a.fixItems != nil {
 		if len(a.fixItems) != len(values) {
 			result = multierror.Append(result, errors.Errorf("length of %s array should is equal %d", a.name, len(a.fixItems)))
 			return result

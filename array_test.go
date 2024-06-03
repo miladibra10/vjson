@@ -2,7 +2,6 @@ package vjson
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -142,7 +141,7 @@ func TestFixPositionArrayField_MarshalJSON(t *testing.T) {
 
 	assert.Equal(t, "foo", data["name"])
 	assert.Equal(t, string(arrayType), data["type"])
-	fmt.Printf("%v", data)
+
 	fixItems := data["fix_items"].([]interface{})
 	assert.Equal(t, "bar", fixItems[0].(map[string]interface{})["name"])
 	assert.Equal(t, "baz", fixItems[1].(map[string]interface{})["name"])

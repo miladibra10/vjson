@@ -104,6 +104,7 @@ import "github.com/miladibra10/vjson"
 func main() {
 	schemaStr := `
 	{
+    "strict": true,
 		"fields": [
 			{
 				"name": "name",
@@ -117,8 +118,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-  schema.SetStrict(true) // default false
 
   // field age is not validate, so validate is false
 	jsonString := `
@@ -142,8 +141,6 @@ func main() {
 > **Note**: You could Marshal your schema as a json object for backup usages with `json.Marshal` function.
 
 
-### Strict Mode
-When set strict mode is true, all fields in json object must validate. Default strict mode is `false`.
 
 # Fields
 
@@ -383,7 +380,7 @@ vjson.Array("foo", vjson.Integer("item").Range(0,20)).Required().MinLength(2).Ma
 }
 ```
 
-### Fix Position Array
+### Fixed Length Array
 
 Each item has a different type in the array.
 
@@ -424,6 +421,9 @@ the first argument is the name of object field, and the second one is the schema
 some validation characteristics could be added to an array field with chaining some functions:
 
 + [Required()](#object) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [Strict()](#object)
+When set strict mode is true, all fields in json object must validate. Default strict mode is `false`.
+
 
 object field could be described by a json for schema parsing.
 + **`name`**: the name of the field
@@ -439,7 +439,7 @@ a required object field, named `foo` which its valid value is an object with `na
 vjson.Object("foo", vjson.NewSchema(
 	vjson.String("name").Required(),
 	vjson.String("last_name").Required(),
-	)).Required()
+	)).Required().Strict()
 ```
 
 #### File
@@ -449,6 +449,7 @@ vjson.Object("foo", vjson.NewSchema(
   "type": "object",
   "required": true,
   "schema": {
+    "strict": true,
     "fields": [
       {
         "name": "name",

@@ -14,16 +14,13 @@ import (
 // Schema is the type for declaring a JSON schema and validating a json object.
 type Schema struct {
 	Fields     []Field `json:"fields"`
-	StrictMode bool
+	StrictMode bool    `json:"strict"`
 }
 
 // SchemaSpec is used for parsing a Schema
 type SchemaSpec struct {
-	Fields []map[string]interface{} `json:"fields"`
-}
-
-func (s *Schema) SetStrict(strict bool) {
-	s.StrictMode = strict
+	Fields     []map[string]interface{} `json:"fields"`
+	StrictMode bool                     `json:"strict"`
 }
 
 // UnmarshalJSON is implemented for parsing a Schema. it overrides json.Unmarshal behaviour.
@@ -34,6 +31,7 @@ func (s *Schema) UnmarshalJSON(bytes []byte) error {
 		return errors.Wrap(err, "could not unmarshal to SchemaSpec")
 	}
 	s.Fields = make([]Field, 0, len(schemaSpec.Fields))
+	s.StrictMode = schemaSpec.StrictMode
 
 	var result error
 
@@ -200,6 +198,9 @@ func (s *Schema) getArrayField(fieldSpec map[string]interface{}) (*ArrayField, e
 	if !found && !foundFixItem {
 		return nil, errors.Errorf("items key is missing for array field name: %s", arraySpec.Name)
 	}
+	if found && foundFixItem {
+		return nil, errors.Errorf("could not both using items key and fix items for array field name: %s", arraySpec.Name)
+	}
 
 	if itemsFieldSpec, ok := itemsFieldSpecRaw.(map[string]interface{}); ok {
 		itemField, err = s.getField(itemsFieldSpec)
@@ -313,8 +314,8 @@ func (s *Schema) ValidateString(input string) error {
 
 func (s *Schema) validateJSON(json gjson.Result) error {
 	var result error
-	if s.StrictMode {
-		if json.IsObject() {
+	if json.IsObject() {
+		if s.StrictMode {
 			jsonMap := json.Map()
 			for jsonField := range jsonMap {
 				fieldFound := false

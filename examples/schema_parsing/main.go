@@ -7,6 +7,7 @@ import (
 func main() {
 	schemaStr := `
 	{
+		"strict": true,
 		"fields": [
 			{
 				"name": "name",
@@ -19,6 +20,39 @@ func main() {
 					"name": "12",
 					"type": "integer"
 				}]
+			},
+			{
+				"name": "person",
+				"type": "object",
+				"required": true,
+				"schema": {
+					"strict": true,
+					"fields": [
+					  {
+						"name": "name",
+						"type": "object",
+						"required": true,
+						"schema": {
+							"strict": true,
+							"fields": [{
+								"name": "first",
+								"type": "string",
+								"required": true
+							},
+							{
+								"name": "last",
+								"type": "string",
+								"required": true
+							}]
+						}
+					  },
+					  {
+						"name": "gender",
+						"type": "string",
+						"required": true
+					  }
+					]
+				}
 			}
 		]
 	}
@@ -27,10 +61,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 	jsonString := `
 	{
-		"name": ["hello", 123]
+		"name": ["hello", 123],
+		"person": {
+			"name": {
+				"first": "asg",
+				"last": "4234"
+			},
+			"gender": "male"
+		}
 	}
 	`
 
