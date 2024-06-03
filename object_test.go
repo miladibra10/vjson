@@ -78,6 +78,27 @@ func TestObjectField_Validate(t *testing.T) {
 			assert.NotNil(t, err)
 		})
 
+		t.Run("strict_off_and_not_required", func(t *testing.T) {
+			field := Object("foo", objSchema)
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.Nil(t, err)
+		})
+
+		t.Run("strict_on_and_not_required", func(t *testing.T) {
+			field := Object("foo", objSchema).Strict()
+
+			err := field.Validate(`{"age":10, "name": "john"}`)
+			assert.NotNil(t, err)
+		})
+
+		t.Run("strict_on_and_not_required_for_nil", func(t *testing.T) {
+			field := Object("foo", objSchema).Strict()
+
+			err := field.Validate(nil)
+			assert.Nil(t, err)
+		})
+
 		t.Run("strict_on_struct", func(t *testing.T) {
 			objSchemaStrict := Schema{
 				Fields: []Field{
