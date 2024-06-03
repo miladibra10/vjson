@@ -1,6 +1,8 @@
 package main
 
-import "github.com/miladibra10/vjson"
+import (
+	"github.com/miladibra10/vjson"
+)
 
 func main() {
 	schemaStr := `
@@ -8,8 +10,15 @@ func main() {
 		"fields": [
 			{
 				"name": "name",
-				"type": "string"
-				"required": true
+				"type": "array",
+				"required": true,
+				"fix_items": [{
+					"name": "11",
+					"type": "string"
+				}, {
+					"name": "12",
+					"type": "integer"
+				}]
 			}
 		]
 	}
@@ -21,7 +30,7 @@ func main() {
 
 	jsonString := `
 	{
-		"name": "James"
+		"name": ["hello", 123]
 	}
 	`
 

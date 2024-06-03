@@ -118,15 +118,19 @@ func main() {
 		panic(err)
 	}
 
+  schema.SetStrict(true) // default false
+
+  // field age is not validate, so validate is false
 	jsonString := `
 	{
-		"name": "James"
+		"name": "James",
+    "age": 10
 	}
 	`
-
+  
 	err = schema.ValidateString(jsonString)
 	if err != nil {
-		panic(err)
+		fmt.Printf("schema is not valid: " + err.Error())
 	}
 }
 ```
@@ -136,6 +140,10 @@ func main() {
 `schema` object contains a string field, named `name`. This code validates `jsonString`.
 
 > **Note**: You could Marshal your schema as a json object for backup usages with `json.Marshal` function.
+
+
+### Strict Mode
+When set strict mode is true, all fields in json object must validate. Default strict mode is `false`.
 
 # Fields
 
@@ -372,6 +380,34 @@ vjson.Array("foo", vjson.Integer("item").Range(0,20)).Required().MinLength(2).Ma
       }
     ]
   }
+}
+```
+
+### Fix Position Array
+
+Each item has a different type in the array.
+
+#### Code
+```go
+vjson.FixArray("foo", []Field{
+  vjson.String("item"),
+  vjson.Integer("item2")
+})
+```
+
+#### File
+```json
+{
+  "name": "foo",
+  "type": "array",
+  "required": true,
+  "fix_items": [{
+    "name": "item",
+    "type": "string",
+  }, {
+    "name": "item2",
+    "type": "integer",
+  }]
 }
 ```
 
