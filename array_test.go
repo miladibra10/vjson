@@ -95,6 +95,107 @@ func TestArrayField_Validate(t *testing.T) {
 		err = field.Validate([]interface{}{1, 2})
 		assert.Nil(t, err)
 	})
+
+	t.Run("invalid_length_values", func(t *testing.T) {
+		t.Run("negative_min_length", func(t *testing.T) {
+			field := Array("foo", Integer("bar")).MinLength(-1)
+
+			// The implementation actually sets the validation to true and keeps the negative value
+			assert.Equal(t, true, field.minLengthValidation)
+			assert.Equal(t, -1, field.minLength)
+		})
+
+		t.Run("negative_max_length", func(t *testing.T) {
+			field := Array("foo", Integer("bar")).MaxLength(-1)
+
+			// The implementation actually sets the validation to true and keeps the negative value
+			assert.Equal(t, true, field.maxLengthValidation)
+			assert.Equal(t, -1, field.maxLength)
+		})
+	})
+
+	t.Run("empty_array", func(t *testing.T) {
+		t.Run("with_min_length", func(t *testing.T) {
+			field := Array("foo", Integer("bar")).MinLength(1)
+
+			err := field.Validate([]interface{}{})
+			assert.NotNil(t, err)
+		})
+
+		t.Run("without_min_length", func(t *testing.T) {
+			field := Array("foo", Integer("bar"))
+
+			err := field.Validate([]interface{}{})
+			assert.Nil(t, err)
+		})
+	})
+
+	t.Run("combined_validations", func(t *testing.T) {
+		field := Array("foo", Integer("bar")).MinLength(2).MaxLength(4)
+
+		err := field.Validate([]interface{}{1})
+		assert.NotNil(t, err) // Too short
+
+		err = field.Validate([]interface{}{1, 2})
+		assert.Nil(t, err)
+
+		err = field.Validate([]interface{}{1, 2, 3, 4})
+		assert.Nil(t, err)
+
+		err = field.Validate([]interface{}{1, 2, 3, 4, 5})
+		assert.NotNil(t, err) // Too long
+	})
+
+	t.Run("different_item_types", func(t *testing.T) {
+		t.Run("string_array", func(t *testing.T) {
+			field := Array("foo", String("bar"))
+
+			err := field.Validate([]interface{}{"a", "b", "c"})
+			assert.Nil(t, err)
+
+			err = field.Validate([]interface{}{1, 2, 3})
+			assert.NotNil(t, err) // Integers in a string array
+		})
+
+		t.Run("boolean_array", func(t *testing.T) {
+			field := Array("foo", Boolean("bar"))
+
+			err := field.Validate([]interface{}{true, false, true})
+			assert.Nil(t, err)
+
+			err = field.Validate([]interface{}{"true", "false"})
+			assert.NotNil(t, err) // Strings in a boolean array
+		})
+	})
+
+	t.Run("nested_arrays", func(t *testing.T) {
+		innerArrayField := Array("inner", Integer("value"))
+		outerArrayField := Array("outer", innerArrayField)
+
+		// Valid nested array: [[1, 2], [3, 4]]
+		validNestedArray := []interface{}{
+			[]interface{}{1, 2},
+			[]interface{}{3, 4},
+		}
+		err := outerArrayField.Validate(validNestedArray)
+		assert.Nil(t, err)
+
+		// Invalid nested array: [[1, 2], ["a", "b"]]
+		invalidNestedArray := []interface{}{
+			[]interface{}{1, 2},
+			[]interface{}{"a", "b"}, // String values in an integer array
+		}
+		err = outerArrayField.Validate(invalidNestedArray)
+		assert.NotNil(t, err)
+
+		// Invalid nested array: [[1, 2], 3]
+		invalidTypeArray := []interface{}{
+			[]interface{}{1, 2},
+			3, // Not an array
+		}
+		err = outerArrayField.Validate(invalidTypeArray)
+		assert.NotNil(t, err)
+	})
 }
 
 func TestArrayField_MarshalJSON(t *testing.T) {

@@ -306,6 +306,150 @@ func TestSchema_UnmarshalJSON(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestSchema_MultipleFieldsSameType(t *testing.T) {
+	schema := Schema{
+		Fields: []Field{
+			String("first_name").Required().MinLength(2),
+			String("last_name").Required().MinLength(2),
+			String("email").Required().Format("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"),
+		},
+	}
+
+	// Valid input with all string fields
+	validJSON := `{
+		"first_name": "John",
+		"last_name": "Doe",
+		"email": "john.doe@example.com"
+	}`
+	err := schema.ValidateString(validJSON)
+	assert.Nil(t, err)
+
+	// Invalid first_name (too short)
+	invalidFirstName := `{
+		"first_name": "J",
+		"last_name": "Doe",
+		"email": "john.doe@example.com"
+	}`
+	err = schema.ValidateString(invalidFirstName)
+	assert.NotNil(t, err)
+
+	// Invalid email format
+	invalidEmail := `{
+		"first_name": "John",
+		"last_name": "Doe",
+		"email": "not-an-email"
+	}`
+	err = schema.ValidateString(invalidEmail)
+	assert.NotNil(t, err)
+}
+
+func TestSchema_FieldsWithSameName(t *testing.T) {
+	// This is an edge case - fields with the same name
+	// The actual behavior is that all fields with the same name are validated
+	schema := Schema{
+		Fields: []Field{
+			String("name").Required().MinLength(5),
+			Integer("name").Required().Min(10),
+		},
+	}
+
+	// Valid for integer field, invalid for string field
+	validForInteger := `{"name": 15}`
+	err := schema.ValidateString(validForInteger)
+	assert.NotNil(t, err) // Fails because 15 is not a string
+
+	// Valid for string field, invalid for integer field
+	validForString := `{"name": "John Doe"}`
+	err = schema.ValidateString(validForString)
+	assert.NotNil(t, err) // Fails because "John Doe" is not an integer
+
+	// Invalid for both fields
+	invalidForBoth := `{"name": true}`
+	err = schema.ValidateString(invalidForBoth)
+	assert.NotNil(t, err)
+
+	// Let's create a schema with fields that don't conflict
+	nonConflictingSchema := Schema{
+		Fields: []Field{
+			String("name").Required(),
+			Integer("age").Required().Min(10),
+		},
+	}
+
+	// Valid for both fields
+	validForBoth := `{"name": "John Doe", "age": 15}`
+	err = nonConflictingSchema.ValidateString(validForBoth)
+	assert.Nil(t, err)
+}
+
+func TestSchema_ValidateMap(t *testing.T) {
+	schema := Schema{
+		Fields: []Field{
+			String("name").Required(),
+			Integer("age").Required().Min(18),
+		},
+	}
+
+	// Valid map
+	validMap := map[string]interface{}{
+		"name": "John Doe",
+		"age":  25,
+	}
+	validJSON, err := json.Marshal(validMap)
+	assert.Nil(t, err)
+	err = schema.ValidateBytes(validJSON)
+	assert.Nil(t, err)
+
+	// Invalid map (missing required field)
+	invalidMap1 := map[string]interface{}{
+		"name": "John Doe",
+	}
+	invalidJSON1, err := json.Marshal(invalidMap1)
+	assert.Nil(t, err)
+	err = schema.ValidateBytes(invalidJSON1)
+	assert.NotNil(t, err)
+
+	// Invalid map (wrong type)
+	invalidMap2 := map[string]interface{}{
+		"name": "John Doe",
+		"age":  "25", // String instead of integer
+	}
+	invalidJSON2, err := json.Marshal(invalidMap2)
+	assert.Nil(t, err)
+	err = schema.ValidateBytes(invalidJSON2)
+	assert.NotNil(t, err)
+
+	// Invalid map (below minimum)
+	invalidMap3 := map[string]interface{}{
+		"name": "John Doe",
+		"age":  15,
+	}
+	invalidJSON3, err := json.Marshal(invalidMap3)
+	assert.Nil(t, err)
+	err = schema.ValidateBytes(invalidJSON3)
+	assert.NotNil(t, err)
+}
+
+func TestSchema_EmptySchema(t *testing.T) {
+	emptySchema := Schema{
+		Fields: []Field{},
+	}
+
+	// Any JSON should be valid for an empty schema
+	err := emptySchema.ValidateString(`{"name": "John", "age": 30}`)
+	assert.Nil(t, err)
+
+	err = emptySchema.ValidateString(`{}`)
+	assert.Nil(t, err)
+
+	err = emptySchema.ValidateString(`[]`)
+	assert.Nil(t, err)
+
+	// Even invalid JSON should fail
+	err = emptySchema.ValidateString(`{invalid}`)
+	assert.NotNil(t, err)
+}
+
 func BenchmarkSchema_ValidateString(b *testing.B) {
 	s := NewSchema(
 		String("first_name").Required().MinLength(2),

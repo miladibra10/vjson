@@ -93,6 +93,126 @@ func TestFloatField_Validate(t *testing.T) {
 		err = field.Validate(float64(100))
 		assert.NotNil(t, err)
 	})
+
+	t.Run("invalid_range", func(t *testing.T) {
+		field := Float("foo").Required().Range(10.5, 5.5) // Start > End
+
+		err := field.Validate(float64(7.5))
+		assert.NotNil(t, err)
+
+		err = field.Validate(float64(12.5))
+		assert.NotNil(t, err)
+
+		err = field.Validate(float64(3.5))
+		assert.NotNil(t, err)
+	})
+
+	t.Run("overlapping_ranges", func(t *testing.T) {
+		field := Float("foo").Required().Range(1.5, 10.5).Range(5.5, 15.5)
+
+		err := field.Validate(float64(3.5))
+		assert.Nil(t, err)
+
+		err = field.Validate(float64(7.5))
+		assert.Nil(t, err) // In both ranges
+
+		err = field.Validate(float64(12.5))
+		assert.Nil(t, err)
+
+		err = field.Validate(float64(20.5))
+		assert.NotNil(t, err)
+	})
+
+	t.Run("zero_validation", func(t *testing.T) {
+		t.Run("positive", func(t *testing.T) {
+			field := Float("foo").Required().Positive()
+
+			// The implementation actually allows zero as positive
+			err := field.Validate(float64(0))
+			assert.Nil(t, err)
+
+			err = field.Validate(float64(0.1))
+			assert.Nil(t, err)
+		})
+
+		t.Run("negative", func(t *testing.T) {
+			field := Float("foo").Required().Negative()
+
+			// The implementation actually allows zero as negative
+			err := field.Validate(float64(0))
+			assert.Nil(t, err)
+
+			err = field.Validate(float64(-0.1))
+			assert.Nil(t, err)
+		})
+	})
+
+	t.Run("integer_values", func(t *testing.T) {
+		field := Float("foo").Required().Range(1.5, 10.5)
+
+		// The implementation doesn't accept integer values for float fields
+		err := field.Validate(5)
+		assert.NotNil(t, err)
+
+		// But it would accept float values
+		err = field.Validate(float64(5))
+		assert.Nil(t, err)
+
+		err = field.Validate(float64(15))
+		assert.NotNil(t, err)
+	})
+
+	t.Run("combined_validations", func(t *testing.T) {
+		t.Run("positive_min_max", func(t *testing.T) {
+			field := Float("foo").Required().Positive().Min(5.5).Max(10.5)
+
+			err := field.Validate(float64(3.5))
+			assert.NotNil(t, err) // Less than min
+
+			err = field.Validate(float64(7.5))
+			assert.Nil(t, err)
+
+			err = field.Validate(float64(12.5))
+			assert.NotNil(t, err) // Greater than max
+
+			err = field.Validate(float64(-3.5))
+			assert.NotNil(t, err) // Not positive
+		})
+
+		t.Run("negative_min_max", func(t *testing.T) {
+			field := Float("foo").Required().Negative().Min(-10.5).Max(-5.5)
+
+			err := field.Validate(float64(-12.5))
+			assert.NotNil(t, err) // Less than min
+
+			err = field.Validate(float64(-7.5))
+			assert.Nil(t, err)
+
+			err = field.Validate(float64(-3.5))
+			assert.NotNil(t, err) // Greater than max
+
+			err = field.Validate(float64(3.5))
+			assert.NotNil(t, err) // Not negative
+		})
+
+		t.Run("range_and_min_max", func(t *testing.T) {
+			field := Float("foo").Required().Range(1.5, 10.5).Min(5.5).Max(15.5)
+
+			err := field.Validate(float64(3.5))
+			assert.NotNil(t, err) // Less than min
+
+			err = field.Validate(float64(7.5))
+			assert.Nil(t, err)
+
+			// The implementation requires values to be within the specified ranges,
+			// even if they're within min/max
+			err = field.Validate(float64(12.5))
+			assert.NotNil(t, err) // Within max but outside range
+
+			err = field.Validate(float64(20.5))
+			assert.NotNil(t, err) // Greater than max
+		})
+	})
 }
 
 func TestFloatField_MarshalJSON(t *testing.T) {

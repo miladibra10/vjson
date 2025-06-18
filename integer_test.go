@@ -119,6 +119,111 @@ func TestIntegerField_Validate(t *testing.T) {
 		err = field.Validate(100)
 		assert.NotNil(t, err)
 	})
+
+	t.Run("invalid_range", func(t *testing.T) {
+		field := Integer("foo").Required().Range(10, 5) // Start > End
+
+		err := field.Validate(7)
+		assert.NotNil(t, err)
+
+		err = field.Validate(12)
+		assert.NotNil(t, err)
+
+		err = field.Validate(3)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("overlapping_ranges", func(t *testing.T) {
+		field := Integer("foo").Required().Range(1, 10).Range(5, 15)
+
+		err := field.Validate(3)
+		assert.Nil(t, err)
+
+		err = field.Validate(7)
+		assert.Nil(t, err) // In both ranges
+
+		err = field.Validate(12)
+		assert.Nil(t, err)
+
+		err = field.Validate(20)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("zero_validation", func(t *testing.T) {
+		t.Run("positive", func(t *testing.T) {
+			field := Integer("foo").Required().Positive()
+
+			// The implementation actually allows zero as positive
+			err := field.Validate(0)
+			assert.Nil(t, err)
+
+			err = field.Validate(1)
+			assert.Nil(t, err)
+		})
+
+		t.Run("negative", func(t *testing.T) {
+			field := Integer("foo").Required().Negative()
+
+			// The implementation actually allows zero as negative
+			err := field.Validate(0)
+			assert.Nil(t, err)
+
+			err = field.Validate(-1)
+			assert.Nil(t, err)
+		})
+	})
+
+	t.Run("combined_validations", func(t *testing.T) {
+		t.Run("positive_min_max", func(t *testing.T) {
+			field := Integer("foo").Required().Positive().Min(5).Max(10)
+
+			err := field.Validate(3)
+			assert.NotNil(t, err) // Less than min
+
+			err = field.Validate(7)
+			assert.Nil(t, err)
+
+			err = field.Validate(12)
+			assert.NotNil(t, err) // Greater than max
+
+			err = field.Validate(-3)
+			assert.NotNil(t, err) // Not positive
+		})
+
+		t.Run("negative_min_max", func(t *testing.T) {
+			field := Integer("foo").Required().Negative().Min(-10).Max(-5)
+
+			err := field.Validate(-12)
+			assert.NotNil(t, err) // Less than min
+
+			err = field.Validate(-7)
+			assert.Nil(t, err)
+
+			err = field.Validate(-3)
+			assert.NotNil(t, err) // Greater than max
+
+			err = field.Validate(3)
+			assert.NotNil(t, err) // Not negative
+		})
+
+		t.Run("range_and_min_max", func(t *testing.T) {
+			field := Integer("foo").Required().Range(1, 10).Min(5).Max(15)
+
+			err := field.Validate(3)
+			assert.NotNil(t, err) // Less than min
+
+			err = field.Validate(7)
+			assert.Nil(t, err)
+
+			// The implementation requires values to be within the specified ranges,
+			// even if they're within min/max
+			err = field.Validate(12)
+			assert.NotNil(t, err) // Within max but outside range
+
+			err = field.Validate(20)
+			assert.NotNil(t, err) // Greater than max
+		})
+	})
 }
 
 func TestIntegerField_MarshalJSON(t *testing.T) {

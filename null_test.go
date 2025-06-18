@@ -31,6 +31,15 @@ func TestNullField_Validate(t *testing.T) {
 
 		err := field.Validate(1)
 		assert.NotNil(t, err)
+
+		err = field.Validate("null")
+		assert.NotNil(t, err)
+
+		err = field.Validate(false)
+		assert.NotNil(t, err)
+
+		err = field.Validate("")
+		assert.NotNil(t, err)
 	})
 	t.Run("valid_input", func(t *testing.T) {
 		field := Null("foo")
@@ -38,4 +47,20 @@ func TestNullField_Validate(t *testing.T) {
 		err := field.Validate(nil)
 		assert.Nil(t, err)
 	})
+}
+
+func TestNewNull(t *testing.T) {
+	field := NewNull(NullFieldSpec{
+		Name: "test_null",
+	})
+
+	assert.NotNil(t, field)
+	assert.Equal(t, "test_null", field.name)
+
+	// Validate the field works correctly
+	err := field.Validate(nil)
+	assert.Nil(t, err)
+
+	err = field.Validate("not null")
+	assert.NotNil(t, err)
 }

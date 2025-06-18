@@ -46,13 +46,35 @@ func TestBooleanField_Validate(t *testing.T) {
 		})
 	})
 	t.Run("should_be", func(t *testing.T) {
-		field := Boolean("foo").Required().ShouldBe(true)
+		t.Run("should_be_true", func(t *testing.T) {
+			field := Boolean("foo").Required().ShouldBe(true)
 
-		err := field.Validate(true)
-		assert.Nil(t, err)
+			err := field.Validate(true)
+			assert.Nil(t, err)
 
-		err = field.Validate(false)
-		assert.NotNil(t, err)
+			err = field.Validate(false)
+			assert.NotNil(t, err)
+		})
+
+		t.Run("should_be_false", func(t *testing.T) {
+			field := Boolean("foo").Required().ShouldBe(false)
+
+			err := field.Validate(false)
+			assert.Nil(t, err)
+
+			err = field.Validate(true)
+			assert.NotNil(t, err)
+		})
+
+		t.Run("should_be_not_set", func(t *testing.T) {
+			field := Boolean("foo").Required()
+
+			err := field.Validate(true)
+			assert.Nil(t, err)
+
+			err = field.Validate(false)
+			assert.Nil(t, err)
+		})
 	})
 }
 
