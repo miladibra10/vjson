@@ -40,6 +40,7 @@ list of supported types are:
 + `array`
 + `object`
 + `null`
++ `or`
 
 # How to create a Schema
 
@@ -455,6 +456,59 @@ vjson.Null("foo")
 }
 ```
 
+## Or
+An Or field could be created in code like this:
+```go
+vjson.Or("foo", vjson.String("bar"), vjson.Boolean("baz"))
+```
+The Or field validates if a value matches at least one of the provided field types.
+
+You can provide the field types directly in the constructor, or add them later using the WithFields method.
+
+some validation characteristics could be added to an Or field with chaining some functions:
+
++ [Required()](#or) sets the field as a required field. validation will return an error if a required field is not present in json object.
++ [WithFields(fields ...Field)](#or) replaces field types to check. The value will be valid if it matches at least one of these field types.
+
+Or field could be described by a json for schema parsing.
++ **`name`**: the name of the field
++ **`type`**: type value for Or field must be `or`
++ `required`: whether the field is required or not
+
+### Example
+an Or field, named `foo` which is required, and accepts either a string or a boolean, could be declared like this:
+
+#### Code
+```go
+vjson.Or("foo", vjson.String("bar"), vjson.Boolean("baz")).Required()
+```
+
+Alternatively, you can add fields using the WithFields method:
+
+```go
+vjson.Or("foo").Required().WithFields(vjson.String("bar"), vjson.Boolean("baz"))
+```
+
+#### File
+```json
+{
+  "name": "foo",
+  "type": "or",
+  "required": true,
+  "fields": [
+    {
+      "name": "foo",
+      "type": "null"
+    },
+    {
+      "name": "foo",
+      "type": "string",
+      "required": true
+    }
+  ]
+}
+```
+
 # Validation
 After creating a schema, you can validate your json objects with these methods:
 
@@ -509,7 +563,7 @@ func main() {
 	if err != nil {
 		panic(err) // Will panic because name field is missing in jsonString
 	}
-	
+
 }
 ```
 

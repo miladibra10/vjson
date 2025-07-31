@@ -106,6 +106,15 @@ func (s *Schema) getField(fieldSpec map[string]interface{}) (Field, error) {
 					}
 					return field, nil
 				}
+			case orType:
+				{
+					field, err := s.getOrField(fieldSpec)
+					if err != nil {
+						return nil, err
+					}
+					return field, nil
+				}
+
 			default:
 				{
 					return nil, errors.Errorf("Invalid type: %s", fieldType)
@@ -255,6 +264,44 @@ func (s *Schema) getObjectField(fieldSpec map[string]interface{}) (*ObjectField,
 
 	objectField := NewObject(objectSpec, schema)
 	return objectField, nil
+}
+
+func (s *Schema) getOrField(fieldSpec map[string]interface{}) (*OrField, error) {
+	var orSpec OrFieldSpec
+	err := mapstructure.Decode(fieldSpec, &orSpec)
+	if err != nil {
+		return nil, errors.Wrap(err, "could not decode or field to OrFieldSpec")
+	}
+	if orSpec.Name == "" {
+		return nil, errors.Errorf("name field is required for an or field")
+	}
+
+	fieldsSpecRaw, found := fieldSpec["fields"]
+	if !found {
+		return nil, errors.Errorf("fields key is required for or field name: %s", orSpec.Name)
+	}
+
+	fieldsSpec, ok := fieldsSpecRaw.([]interface{})
+	if !ok {
+		return nil, errors.Errorf("invalid format for fields key for or field name: %s", orSpec.Name)
+	}
+
+	fields := make([]Field, 0, len(fieldsSpec))
+	for _, fieldSpecRaw := range fieldsSpec {
+		fieldSpec, ok := fieldSpecRaw.(map[string]interface{})
+		if !ok {
+			return nil, errors.Errorf("invalid field specification in or field name: %s", orSpec.Name)
+		}
+		field, err := s.getField(fieldSpec)
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not get field of or field name: %s", orSpec.Name)
+		}
+		fields = append(fields, field)
+	}
+
+	orField := NewOr(orSpec)
+	orField.fields = fields
+	return orField, nil
 }
 
 func (s *Schema) getNullField(fieldSpec map[string]interface{}) (*NullField, error) {

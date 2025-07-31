@@ -1,0 +1,19 @@
+{
+  "fields": [
+    {
+      "name": "value",
+      "type": "or",
+      "required": true,
+      "fields": [
+        {
+          "name": "string_value",
+          "type": "string"
+        },
+        {
+          "name": "boolean_value",
+          "type": "boolean"
+        }
+      ]
+    }
+  ]
+}

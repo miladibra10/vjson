@@ -247,6 +247,25 @@ func TestReadFromFile(t *testing.T) {
 			assert.Nil(t, schema)
 		})
 	})
+	t.Run("or", func(t *testing.T) {
+		t.Run("valid", func(t *testing.T) {
+			schema, err := ReadFromFile("test/or.json")
+			assert.Nil(t, err)
+			assert.Len(t, schema.Fields, 1)
+			assert.Equal(t, "value", schema.Fields[0].(*OrField).name)
+			assert.Equal(t, true, schema.Fields[0].(*OrField).required)
+			assert.Len(t, schema.Fields[0].(*OrField).fields, 2)
+			// Check that the fields are of the expected types
+			assert.Equal(t, "string_value", schema.Fields[0].(*OrField).fields[0].GetName())
+			assert.Equal(t, "boolean_value", schema.Fields[0].(*OrField).fields[1].GetName())
+		})
+
+		t.Run("invalid", func(t *testing.T) {
+			schema, err := ReadFromFile("test/or_invalid.json")
+			assert.NotNil(t, err)
+			assert.Nil(t, schema)
+		})
+	})
 	t.Run("invalid_type", func(t *testing.T) {
 		schema, err := ReadFromFile("test/invalid_type.json")
 		assert.NotNil(t, err)

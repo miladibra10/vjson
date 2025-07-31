@@ -10,6 +10,7 @@ const (
 	booleanType fieldType = "boolean"
 	objectType  fieldType = "object"
 	nullType    fieldType = "null"
+	orType      fieldType = "or"
 )
 
 const typeKey = "type"
